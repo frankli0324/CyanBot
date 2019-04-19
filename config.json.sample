@@ -1,0 +1,9 @@
+{
+    "coolq_config": {
+        "api_addr": "http://apiaddr.example",
+        "listen_port": 234,
+        "listen_secret": "secret",
+        "access_token": "token"
+    },
+    "db_path": "../bounty.db"
+}

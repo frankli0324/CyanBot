@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="cqhttp.Cyan">
+      <HintPath>../cqhttp.Cyan/src/bin/Debug/netcoreapp2.1/cqhttp.Cyan.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.110.0" />
+  </ItemGroup>
+  
+</Project>
