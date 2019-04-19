@@ -21,9 +21,9 @@ namespace CyanBot.Functions {
                 string helpMsg = "Usage: /{hitokoto/一言} [parameter]\n其中:parameter可为空或 ";
                 foreach (var i in types)
                     helpMsg += i + ',';
-                if (p[2] == "help") return new Message (helpMsg.TrimEnd (',') + " 其中之一");
-                else if (types.Contains (p[2]))
-                    url += $"&c={Convert.ToChar('a' + types.IndexOf(p[2]))}";
+                if (p[1] == "help") return new Message (helpMsg.TrimEnd (',') + " 其中之一");
+                else if (types.Contains (p[1]))
+                    url += $"&c={Convert.ToChar('a' + types.IndexOf(p[1]))}";
             }
             try {
                 using (var http = new System.Net.Http.HttpClient ()) {
