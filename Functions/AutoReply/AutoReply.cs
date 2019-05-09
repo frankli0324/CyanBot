@@ -33,11 +33,11 @@ namespace CyanBot.Functions {
 
         public static void Register () {
             DBAgent.InitDB ();
-            FunctionPool.onCommand.Add ("teach", (p) => Teach (p));
-            FunctionPool.onCommand.Add ("force", (p) => Teach (p, true));
+            FunctionPool.onCommand.Add ("teach", (p) => Teach (p.parameters));
+            FunctionPool.onCommand.Add ("force", (p) => Teach (p.parameters, true));
             FunctionPool.onCommand.Add ("reply", (p) => {
                 try {
-                    return Reply (p[1]);
+                    return Reply (p.parameters[1]);
                 } catch (KeyNotFoundException) {
                     return new Message (new ElementText ("我还不会这句话emmmmm..."));
                 } catch {
@@ -46,7 +46,7 @@ namespace CyanBot.Functions {
             });
             FunctionPool.onCommand.Add ("delete", (p) => {
                 try {
-                    return Delete (p[1]);
+                    return Delete (p.parameters[1]);
                 } catch {
                     return new Message (new ElementText ("干嘛?"));
                 }

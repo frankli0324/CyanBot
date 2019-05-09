@@ -4,7 +4,7 @@ using cqhttp.Cyan.Messages;
 using Newtonsoft.Json.Linq;
 
 namespace CyanBot.Functions {
-    public static class Hitokoto {
+    public class Hitokoto {
         static List<string> types = new List<string> {
             "Anime",
             "Comic",
@@ -33,8 +33,8 @@ namespace CyanBot.Functions {
             return new Message ($"{result["hitokoto"].ToString()}\n--{result["from"].ToString()}");
         }
         public static void Register () {
-            FunctionPool.onCommand.Add ("hitokoto", (p) => GetHitokoto (p));
-            FunctionPool.onCommand.Add ("一言", (p) => GetHitokoto (p));
+            FunctionPool.onCommand.Add ("hitokoto", (p) => GetHitokoto (p.parameters));
+            FunctionPool.onCommand.Add ("一言", (p) => GetHitokoto (p.parameters));
         }
     }
 }

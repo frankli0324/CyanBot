@@ -6,8 +6,8 @@ using CyanBot.Functions;
 
 namespace CyanBot {
     public static class FunctionPool {
-        public static Dictionary<string, Func<List<string>, Message>> onCommand =
-            new Dictionary<string, Func<List<string>, Message>> ();
+        public static Dictionary<string, Func<Dispatcher.Command, Message>> onCommand =
+            new Dictionary<string, Func<Dispatcher.Command, Message>> ();
         public static List < Func < (MessageType, long), Message, Message >> onAny =
             new List < Func < (MessageType, long), Message, Message >> ();
         public static void Initialize () {
@@ -15,6 +15,7 @@ namespace CyanBot {
             Hitokoto.Register ();
             Music.Register ();
             Repeater.Register ();
+            Time.Register ();
         }
     }
 }

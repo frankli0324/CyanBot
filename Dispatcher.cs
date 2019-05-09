@@ -16,10 +16,11 @@ namespace CyanBot.Dispatcher {
                 foreach (var i in e.message.data)
                     if (i.type == "text") raw_text += i.data["text"];
                 var command = Parser.ParseCommand (raw_text, e.sender.nickname);
+                command.endPoint = (cli, endPoint);
                 if (FunctionPool.onCommand.ContainsKey (command.operation))
                     cli.SendMessageAsync (
                         endPoint,
-                        FunctionPool.onCommand[command.operation] (command.parameters)
+                        FunctionPool.onCommand[command.operation] (command)
                     ); //must respond
             } catch (CommandErrorException) { }
             foreach (var i in FunctionPool.onAny) {
@@ -29,8 +30,9 @@ namespace CyanBot.Dispatcher {
             }
         }
     }
-    struct Command {
+    public struct Command {
         public string operation;
+        public (CQApiClient, (MessageType, long)) endPoint;
         public List<string> parameters;
     }
     class CommandErrorException : Exception { };
