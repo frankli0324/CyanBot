@@ -3,7 +3,7 @@ using cqhttp.Cyan.Messages.CQElements;
 
 namespace CyanBot.Functions {
     public class Music {
-        public static void Register () {
+        public static void LoadModule () {
             FunctionPool.onCommand.Add ("listen", (p) => new Message (new ElementMusic (
                 "163", p.parameters[1]
             )));

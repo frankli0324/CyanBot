@@ -28,7 +28,7 @@ namespace CyanBot.Functions {
             new HashSet < (CQApiClient, (MessageType, long)) > ();
         static bool isStarted = false;
         static System.Timers.Timer t = new System.Timers.Timer (3600000);
-        public static void Register () {
+        public static void LoadModule () {
             FunctionPool.onCommand.Add ("start_alarm", (p) => {
                 if (isStarted == false) {
                     Task.Run (() => {

@@ -8,7 +8,7 @@ namespace CyanBot.Functions {
             new Dictionary < (MessageType, long), Message > ();
         static Dictionary < (MessageType, long), bool > repeated =
             new Dictionary < (MessageType, long), bool > ();
-        public static void Register () {
+        public static void LoadModule () {
             FunctionPool.onAny.Add (
                 (endPoint, message) => {
                     if (last.ContainsKey (endPoint) && last[endPoint] == message) {

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using cqhttp.Cyan.Enums;
 using cqhttp.Cyan.Messages;
-using CyanBot.Functions;
 
 namespace CyanBot {
     public static class FunctionPool {
@@ -11,11 +12,16 @@ namespace CyanBot {
         public static List < Func < (MessageType, long), Message, Message >> onAny =
             new List < Func < (MessageType, long), Message, Message >> ();
         public static void Initialize () {
-            AutoReply.Register ();
-            Hitokoto.Register ();
-            Music.Register ();
-            Repeater.Register ();
-            Time.Register ();
+            var q = from t in Assembly.GetExecutingAssembly ().GetTypes ()
+            where t.IsClass && t.Namespace == "CyanBot.Functions"
+            select t;
+            foreach (var i in q.ToList ()) {
+                var RegFunc = i.GetMethod ("LoadModule");
+                if (RegFunc == null) continue;
+                if (!RegFunc.IsStatic || RegFunc.IsAbstract || !RegFunc.IsPublic) continue;
+                cqhttp.Cyan.Logger.Info ("CyanBot: Loading Module: " + i.Name);
+                RegFunc.Invoke (null, null);
+            }
         }
     }
 }

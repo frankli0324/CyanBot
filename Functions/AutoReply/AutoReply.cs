@@ -31,7 +31,7 @@ namespace CyanBot.Functions {
             return new Message (new ElementText ("我本来就不知道这句话，那你叫我忘掉啥"));
         }
 
-        public static void Register () {
+        public static void LoadModule () {
             DBAgent.InitDB ();
             FunctionPool.onCommand.Add ("teach", (p) => Teach (p.parameters));
             FunctionPool.onCommand.Add ("force", (p) => Teach (p.parameters, true));

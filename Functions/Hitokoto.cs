@@ -32,7 +32,7 @@ namespace CyanBot.Functions {
             } catch { return new Message ("网络错误"); }
             return new Message ($"{result["hitokoto"].ToString()}\n--{result["from"].ToString()}");
         }
-        public static void Register () {
+        public static void LoadModule () {
             FunctionPool.onCommand.Add ("hitokoto", (p) => GetHitokoto (p.parameters));
             FunctionPool.onCommand.Add ("一言", (p) => GetHitokoto (p.parameters));
         }
