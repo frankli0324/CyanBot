@@ -21,7 +21,7 @@ namespace CyanBot {
             select t;
             foreach (var i in q.ToList ()) {
                 var RegFunc = i.GetMethod ("LoadModule");
-                if (RegFunc == null) continue;
+                if (RegFunc == null || i.GetMethod ("UnloadModule") == null) continue;
                 if (!RegFunc.IsStatic || RegFunc.IsAbstract || !RegFunc.IsPublic) continue;
                 isModuleLoaded.Add (i.Name, true);
                 moduleTypes.Add (i.Name, i);
