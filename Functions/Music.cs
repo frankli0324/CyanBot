@@ -11,5 +11,9 @@ namespace CyanBot.Functions {
                 "163", p.parameters[1]
             )));
         }
+        public static void UnloadModule () {
+            FunctionPool.onCommand.Remove ("listen");
+            FunctionPool.onCommand.Remove ("点歌");
+        }
     }
 }

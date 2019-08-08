@@ -64,5 +64,10 @@ namespace CyanBot.Functions {
                 return new cqhttp.Cyan.Messages.Message (new ElementText ("停止报时"));
             });
         }
+        public static void UnloadModule () {
+            FunctionPool.onCommand.Remove ("stop_alarm");
+            FunctionPool.onCommand.Remove ("start_alarm");
+            alarmList.Clear ();
+        }
     }
 }

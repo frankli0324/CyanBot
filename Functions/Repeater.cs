@@ -8,21 +8,19 @@ namespace CyanBot.Functions {
             new Dictionary < (MessageType, long), Message > ();
         static Dictionary < (MessageType, long), bool > repeated =
             new Dictionary < (MessageType, long), bool > ();
-        public static void LoadModule () {
-            FunctionPool.onAny.Add (
-                (endPoint, message) => {
-                    if (last.ContainsKey (endPoint) && last[endPoint] == message) {
-                        if (repeated[endPoint] == false) {
-                            repeated[endPoint] = true;
-                            return message;
-                        }
-                    } else {
-                        last[endPoint] = message;
-                        repeated[endPoint] = false;
-                    }
-                    return new Message ();
+        static System.Func < (MessageType, long), Message, Message > repeat = (endPoint, message) => {
+            if (last.ContainsKey (endPoint) && last[endPoint] == message) {
+                if (repeated[endPoint] == false) {
+                    repeated[endPoint] = true;
+                    return message;
                 }
-            );
-        }
+            } else {
+                last[endPoint] = message;
+                repeated[endPoint] = false;
+            }
+            return new Message ();
+        };
+        public static void LoadModule() => FunctionPool.onAny.Add(repeat);
+        public static void UnloadModule() => FunctionPool.onAny.Remove(repeat);
     }
 }

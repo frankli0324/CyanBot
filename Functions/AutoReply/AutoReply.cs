@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using cqhttp.Cyan.Messages;
 using cqhttp.Cyan.Messages.CQElements;
 
@@ -30,9 +29,11 @@ namespace CyanBot.Functions {
             }
             return new Message (new ElementText ("我本来就不知道这句话，那你叫我忘掉啥"));
         }
-
+        static int onAllFuncIndex = 0;
+        static bool isDBInitialized = false;
         public static void LoadModule () {
-            DBAgent.InitDB ();
+            if(!isDBInitialized)
+                DBAgent.InitDB ();
             FunctionPool.onCommand.Add ("teach", (p) => Teach (p.parameters));
             FunctionPool.onCommand.Add ("force", (p) => Teach (p.parameters, true));
             FunctionPool.onCommand.Add ("reply", (p) => {
@@ -51,6 +52,7 @@ namespace CyanBot.Functions {
                     return new Message (new ElementText ("干嘛?"));
                 }
             });
+            onAllFuncIndex = FunctionPool.onAny.Count;
             FunctionPool.onAny.Add ((e, s) => {
                 try {
                     string raw_text = "";
@@ -61,6 +63,17 @@ namespace CyanBot.Functions {
                     return new Message ();
                 }
             });
+        }
+        public static void UnloadModule () {
+            foreach (var i in new List<string> () {
+                    "teach",
+                    "force",
+                    "reply",
+                    "delete"
+                }) {
+                FunctionPool.onCommand.Remove (i);
+            }
+            FunctionPool.onAny.RemoveAt (onAllFuncIndex);
         }
     }
 }

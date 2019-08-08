@@ -36,5 +36,9 @@ namespace CyanBot.Functions {
             FunctionPool.onCommand.Add ("hitokoto", (p) => GetHitokoto (p.parameters));
             FunctionPool.onCommand.Add ("一言", (p) => GetHitokoto (p.parameters));
         }
+        public static void UnloadModule () {
+            FunctionPool.onCommand.Remove ("hitokoto");
+            FunctionPool.onCommand.Remove ("一言");
+        }
     }
 }

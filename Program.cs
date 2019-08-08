@@ -12,6 +12,7 @@ namespace CyanBot {
     static class Config {
         public static string api_addr, access_token, listen_secret;
         public static int listen_port;
+        public static long super_user;
     }
     class Program {
 
@@ -26,6 +27,7 @@ namespace CyanBot {
                     Config.listen_port = coolq_config["listen_port"].ToObject<int> ();
                     Config.access_token = coolq_config["access_token"].ToObject<string> ();
                     Config.listen_secret = coolq_config["listen_secret"].ToObject<string> ();
+                    Config.super_user = config_parsed["super_user"].ToObject<long> ();
                 } catch {
                     throw new Exception ("Config file parse error");
                 }
@@ -39,8 +41,10 @@ namespace CyanBot {
                 accessUrl: Config.api_addr,
                 listen_port: Config.listen_port,
                 accessToken: Config.access_token,
-                secret: Config.listen_secret
+                secret: Config.listen_secret,
+                use_group_table: true
             );
+            Logger.LogLevel = Verbosity.INFO;
             FunctionPool.Initialize ();
 
             client.OnEvent += (cli, e) => {
