@@ -5,7 +5,7 @@
 ## Purpose
 
 本项目试图在cqhttp.Cyan的基础上建立指令框架与带权限的管理功能。  
-类似于[nonebot](/richardchien/nonebot)之于[python-aiocqhttp](/richardchien/python-aiocqhttp)之间的关系
+类似于[nonebot](/richardchien/nonebot)之于[python-aiocqhttp](/richardchien/python-aiocqhttp)
 
 ## Configuration/Deploy
 
@@ -14,7 +14,10 @@
 ```sh
 git clone https://github.com/frank-bots/cqhttp.Cyan
 git clone https://github.com/frank-bots/EssentialBot
-cd EssentialBot
+
+cd cqhttp.Cyan
+dotnet restore;dotnet build
+cd ../EssentialBot
 cp config.json.sample config.json
 # 按照直觉配置就好啦（XD
 dotnet restore
