@@ -1,4 +1,5 @@
-bin
-obj
-.vscode
+bin/
+obj/
+.vscode/
 config.json
+.DS_Store

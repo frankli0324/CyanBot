@@ -5,5 +5,5 @@
         "listen_secret": "secret",
         "access_token": "token"
     },
-    "db_path": "../bounty.db"
+    "super_user": 123456788
 }
