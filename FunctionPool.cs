@@ -37,7 +37,7 @@ namespace CyanBot {
                 return new Message (module_list.TrimEnd ('\n'));
             });
             FunctionPool.onCommand.Add ("load_module", (cmd) => {
-                string module = cmd.parameters[1];
+                string module = cmd.parameters[0];
                 if (cmd.endPoint.Item2.Item2 != Config.super_user)
                     return new Message ("Permission Denied");
                 if (!moduleTypes.ContainsKey (module))
@@ -49,7 +49,7 @@ namespace CyanBot {
                 return new Message ($"Loaded Module: \"{module}\"");
             });
             FunctionPool.onCommand.Add ("unload_module", (cmd) => {
-                string module = cmd.parameters[1];
+                string module = cmd.parameters[0];
                 if (cmd.endPoint.Item2.Item2 != Config.super_user)
                     return new Message ("Permission Denied");
                 if (!moduleTypes.ContainsKey (module))

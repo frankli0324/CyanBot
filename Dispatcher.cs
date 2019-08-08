@@ -5,6 +5,19 @@ using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Instance;
 
 namespace CyanBot.Dispatcher {
+    public struct Command {
+        public string operation;
+        /// <summary>
+        /// 发送者信息
+        /// </summary>
+        public Sender sender;
+        /// <summary>
+        /// 表示从何处接收到的消息
+        /// </summary>
+        public (CQApiClient, (MessageType, long)) endPoint;
+        public List<string> parameters;
+    }
+    class CommandErrorException : Exception { };
     public class Dispatcher {
         public static void Dispatch (
             CQApiClient cli,
@@ -15,7 +28,7 @@ namespace CyanBot.Dispatcher {
                 string raw_text = "";
                 foreach (var i in e.message.data)
                     if (i.type == "text") raw_text += i.data["text"];
-                var command = Parser.ParseCommand (raw_text, e.sender.nickname);
+                var command = ParseCommand (raw_text, e.sender);
                 command.endPoint = (cli, endPoint);
                 if (FunctionPool.onCommand.ContainsKey (command.operation))
                     cli.SendMessageAsync (
@@ -29,15 +42,7 @@ namespace CyanBot.Dispatcher {
                     cli.SendMessageAsync (endPoint, ret);
             }
         }
-    }
-    public struct Command {
-        public string operation;
-        public (CQApiClient, (MessageType, long)) endPoint;
-        public List<string> parameters;
-    }
-    class CommandErrorException : Exception { };
-    class Parser {
-        public static Command ParseCommand (string raw, string user) {
+        static Command ParseCommand (string raw, Sender user) {
             try {
                 if (raw.Split (' ') [0][0] != '/')
                     throw new CommandErrorException ();
@@ -48,7 +53,7 @@ namespace CyanBot.Dispatcher {
             string command = raw.Split (' ') [0].Substring (1);
             ret.operation = command;
             ret.parameters = new List<string> ();
-            ret.parameters.Add (user);
+            ret.sender = user;
             if (raw.TrimEnd ().Length == command.Length) return ret;
             raw = raw.Substring (command.Length + 1).Trim ();
 

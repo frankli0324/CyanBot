@@ -17,13 +17,13 @@ namespace CyanBot.Functions {
         public static Message GetHitokoto (List<string> p) {
             JObject result = new JObject ();
             string url = "https://v1.hitokoto.cn/?encode=json&charset=utf-8";
-            if (p.Count > 1) {
+            if (p.Count > 0) {
                 string helpMsg = "Usage: /{hitokoto/一言} [parameter]\n其中:parameter可为空或 ";
                 foreach (var i in types)
                     helpMsg += i + ',';
-                if (p[1] == "help") return new Message (helpMsg.TrimEnd (',') + " 其中之一");
-                else if (types.Contains (p[1]))
-                    url += $"&c={Convert.ToChar('a' + types.IndexOf(p[1]))}";
+                if (p[0] == "help") return new Message (helpMsg.TrimEnd (',') + " 其中之一");
+                else if (types.Contains (p[0]))
+                    url += $"&c={Convert.ToChar('a' + types.IndexOf(p[0]))}";
             }
             try {
                 using (var http = new System.Net.Http.HttpClient ()) {
