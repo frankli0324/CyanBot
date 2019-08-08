@@ -29,3 +29,15 @@ dotnet build
 # or
 dotnet publish -c Release
 ```
+
+## Module System
+
+如果需要添加新的Module，可以在Functions文件夹中新建一个类  
+类名请起得好听一点，因为之后会用来load和unload(  
+EssentialBot会在启动时通过Reflection来加载CyanBot.Functions命名空间下所有含有签名为`public static void LoadModule();`与`public static void UnloadModule();`的函数的类作为Module。  
+配置文件中的super_user项所指定的QQ号码可以通过私聊bot来控制Module的启用与否
+```
+/get_loaded
+/load_module
+/unload_module
+```
