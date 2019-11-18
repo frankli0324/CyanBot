@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using cqhttp.Cyan.Enums;
 using cqhttp.Cyan.Messages;
 using cqhttp.Cyan.Messages.CQElements;
+using CyanBot.Functions.AutoReplyUtils;
 
 namespace CyanBot.Functions {
     public class AutoReply {
@@ -10,11 +13,11 @@ namespace CyanBot.Functions {
             }
             if (DBAgent.isExist (p[0])) {
                 if (force)
-                    DBAgent.Update (p[0], p[1], sender.ToString());
+                    DBAgent.Update (p[0], p[1], sender.ToString ());
                 else
                     return new Message (new ElementText ("我已经被安排过这句话了！"));
             }
-            DBAgent.Insert (p[0], p[1], sender.ToString());
+            DBAgent.Insert (p[0], p[1], sender.ToString ());
             return new Message (new ElementText ("谢谢你，我学会了，你呢?"));
         }
         public static Message Reply (string p) {
@@ -32,7 +35,7 @@ namespace CyanBot.Functions {
         static int onAllFuncIndex = 0;
         static bool isDBInitialized = false;
         public static void LoadModule () {
-            if(!isDBInitialized)
+            if (!isDBInitialized)
                 DBAgent.InitDB ();
             FunctionPool.onCommand.Add ("teach", (p) => Teach (p.parameters, p.sender.user_id));
             FunctionPool.onCommand.Add ("force", (p) => Teach (p.parameters, p.sender.user_id, true));
@@ -58,10 +61,14 @@ namespace CyanBot.Functions {
                     string raw_text = "";
                     foreach (var i in s.data)
                         if (i.type == "text") raw_text += i.data["text"];
-                    return Reply (raw_text);
-                } catch (KeyNotFoundException) {
-                    return new Message ();
-                }
+                    if (Firewall.waf (e, raw_text))
+                        return Reply (raw_text);
+                    else {
+                        Console.WriteLine ($"[WARNING] {e.Item2} triggered firewall");
+                    }
+                } catch (KeyNotFoundException) { }
+
+                return new Message ();
             });
         }
         public static void UnloadModule () {

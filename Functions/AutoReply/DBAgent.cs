@@ -4,7 +4,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Text;
 
-namespace CyanBot.Functions {
+namespace CyanBot.Functions.AutoReplyUtils {
     class DBAgent {
 
         private static SQLHelper data;
