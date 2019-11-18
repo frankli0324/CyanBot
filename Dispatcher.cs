@@ -35,14 +35,14 @@ namespace CyanBot.Dispatcher {
                         endPoint,
                         FunctionPool.onCommand[command.operation] (command)
                     ); //must respond
-                else {
-                    foreach (var i in FunctionPool.onAny) {
-                        var ret = i (endPoint, e.message);
-                        if (ret.data.Count != 0) //can respond
-                            cli.SendMessageAsync (endPoint, ret);
-                    }
+                else { throw new CommandErrorException (); }
+            } catch (CommandErrorException) {
+                foreach (var i in FunctionPool.onAny) {
+                    var ret = i (endPoint, e.message);
+                    if (ret.data.Count != 0) //can respond
+                        cli.SendMessageAsync (endPoint, ret);
                 }
-            } catch (CommandErrorException) { }
+            }
         }
         static Command ParseCommand (string raw, Sender user) {
             try {
