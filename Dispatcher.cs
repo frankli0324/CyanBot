@@ -35,12 +35,14 @@ namespace CyanBot.Dispatcher {
                         endPoint,
                         FunctionPool.onCommand[command.operation] (command)
                     ); //must respond
+                else {
+                    foreach (var i in FunctionPool.onAny) {
+                        var ret = i (endPoint, e.message);
+                        if (ret.data.Count != 0) //can respond
+                            cli.SendMessageAsync (endPoint, ret);
+                    }
+                }
             } catch (CommandErrorException) { }
-            foreach (var i in FunctionPool.onAny) {
-                var ret = i (endPoint, e.message);
-                if (ret.data.Count != 0) //can respond
-                    cli.SendMessageAsync (endPoint, ret);
-            }
         }
         static Command ParseCommand (string raw, Sender user) {
             try {
@@ -61,24 +63,24 @@ namespace CyanBot.Dispatcher {
                 int x = -1;
                 if (raw[0] != '"') raw = raw.Insert (0, " ");
                 switch (raw[i]) {
-                    case '"':
-                        x = raw.Substring (i + 1).IndexOf ('"');
-                        if (x == -1) throw new CommandErrorException ();
+                case '"':
+                    x = raw.Substring (i + 1).IndexOf ('"');
+                    if (x == -1) throw new CommandErrorException ();
+                    ret.parameters.Add (raw.Substring (i + 1, x - i));
+                    raw = raw.Substring (x + 2).Trim ();
+                    i = 0;
+                    break;
+                case ' ':
+                    x = raw.Substring (i + 1).Trim ().IndexOf (' ');
+                    if (x == -1) {
+                        ret.parameters.Add (raw.Substring (i + 1).Trim ());
+                        i = raw.Length; //break,break!
+                    } else {
                         ret.parameters.Add (raw.Substring (i + 1, x - i));
-                        raw = raw.Substring (x + 2).Trim ();
+                        raw = raw.Substring (x + 1).Trim ();
                         i = 0;
-                        break;
-                    case ' ':
-                        x = raw.Substring (i + 1).Trim ().IndexOf (' ');
-                        if (x == -1) {
-                            ret.parameters.Add (raw.Substring (i + 1).Trim ());
-                            i = raw.Length; //break,break!
-                        } else {
-                            ret.parameters.Add (raw.Substring (i + 1, x - i));
-                            raw = raw.Substring (x + 1).Trim ();
-                            i = 0;
-                        }
-                        break;
+                    }
+                    break;
                 }
             }
             return ret;
