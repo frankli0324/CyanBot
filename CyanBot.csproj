@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="cqhttp.Cyan">
-      <HintPath>../cqhttp.Cyan/src/bin/Debug/netcoreapp2.1/cqhttp.Cyan.dll</HintPath>
+      <HintPath>../cqhttp.Cyan/cqhttp.Cyan/bin/Debug/netcoreapp2.1/cqhttp.Cyan.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
