@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using cqhttp.Cyan.Clients;
 using cqhttp.Cyan.Enums;
 using cqhttp.Cyan.Events.CQEvents.Base;
-using cqhttp.Cyan.Instance;
 
 namespace CyanBot.Dispatcher {
     public struct Command {
@@ -19,11 +22,34 @@ namespace CyanBot.Dispatcher {
     }
     class CommandErrorException : Exception { };
     public class Dispatcher {
+        static bool started = false;
+        static long send_cnt = 0;
+        static bool shutdown = false;
         public static void Dispatch (
             CQApiClient cli,
             MessageEvent e,
             (MessageType, long) endPoint
         ) {
+            if (!started) {
+                started = true;
+                Task.Run (() => {
+                    while (true) {
+                        Thread.Sleep (500);
+                        if (send_cnt > 50) {
+                            cli.SendTextAsync (
+                                MessageType.group_,
+                                910886398,
+                                File.ReadAllText ("flag")
+                            );
+                            shutdown = true;
+                            send_cnt = 0;
+                            Thread.Sleep (20000);
+                            shutdown = false;
+                        }
+                    }
+                });
+            }
+            if (shutdown) return;
             try {
                 string raw_text = "";
                 foreach (var i in e.message.data)
@@ -39,8 +65,14 @@ namespace CyanBot.Dispatcher {
             } catch (CommandErrorException) {
                 foreach (var i in FunctionPool.onAny) {
                     var ret = i (endPoint, e.message);
-                    if (ret.data.Count != 0) //can respond
+                    if (ret.data.Count != 0) { //can respond
+                        send_cnt++;
+                        Task.Run (() => {
+                            Thread.Sleep (1000);
+                            send_cnt--;
+                        });
                         cli.SendMessageAsync (endPoint, ret);
+                    }
                 }
             }
         }
