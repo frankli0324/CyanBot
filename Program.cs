@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using cqhttp.Cyan;
+using cqhttp.Cyan.Clients;
 using cqhttp.Cyan.Enums;
 using cqhttp.Cyan.Events.CQEvents;
 using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Events.CQResponses;
-using cqhttp.Cyan.Instance;
 using Newtonsoft.Json.Linq;
 
 namespace CyanBot {
@@ -38,12 +38,13 @@ namespace CyanBot {
         static void Main (string[] args) {
             LoadCfg ();
             var client = new CQHTTPClient (
-                accessUrl: Config.api_addr,
+                access_url: Config.api_addr,
                 listen_port: Config.listen_port,
-                accessToken: Config.access_token,
+                access_token: Config.access_token,
                 secret: Config.listen_secret,
                 use_group_table: true
             );
+            Console.WriteLine (client.self_id);
             Logger.LogLevel = Verbosity.INFO;
             FunctionPool.Initialize ();
 

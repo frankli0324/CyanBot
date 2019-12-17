@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using cqhttp.Cyan.Enums;
-using cqhttp.Cyan.Instance;
+using cqhttp.Cyan.Clients;
 using cqhttp.Cyan.Messages;
 using cqhttp.Cyan.Messages.CQElements;
-using CyanBot;
 
 namespace CyanBot.Functions {
     public class Time {
