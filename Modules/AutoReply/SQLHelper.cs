@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.SQLite;
-namespace CyanBot.Functions.AutoReplyUtils {
+namespace CyanBot.Modules.AutoReplyUtils {
     /// <summary>
     /// SQLite 操作类
     /// </summary>

@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Messages;
 using cqhttp.Cyan.Messages.CQElements;
 
 /*
 inspired by https://coin.keybrl.com/
 */
-namespace CyanBot.Functions {
-    class Choice {
+namespace CyanBot.Modules {
+    public class Choice : Module{
         static T RandomChoice<T> (IEnumerable<T> source) {
             if (source == null) {
                 throw new ArgumentNullException ("source");
@@ -58,11 +59,13 @@ namespace CyanBot.Functions {
             }
             return result;
         }
-        public static void LoadModule () {
-            FunctionPool.onCommand.Add ("roll", (p) => {
-                string result;
-                p.parameters.Add ("help");
-                switch (p.parameters[0]) {
+
+        [OnCommand ("roll")]
+        public Message Roll (string cmd, string[] parameters, MessageEvent e) {
+            string result;
+            if (parameters.Length == 0) result = "rollable: 座位/吃饭";
+            else
+                switch (parameters[0]) {
                 case "座位":
                     result = GetSeat ();
                     break;
@@ -73,13 +76,9 @@ namespace CyanBot.Functions {
                     result = "rollable: 座位/吃饭";
                     break;
                 }
-                return new Message (new ElementText (
-                    result
-                ));
-            });
-        }
-        public static void UnloadModule () {
-            FunctionPool.onCommand.Remove ("roll");
+            return new Message (new ElementText (
+                result
+            ));
         }
     }
 }

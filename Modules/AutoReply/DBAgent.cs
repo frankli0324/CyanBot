@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Text;
 
-namespace CyanBot.Functions.AutoReplyUtils {
+namespace CyanBot.Modules.AutoReplyUtils {
     class DBAgent {
 
         private static SQLHelper data;

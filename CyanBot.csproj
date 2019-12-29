@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="cqhttp.Cyan">
-      <HintPath>../cqhttp.Cyan/cqhttp.Cyan/bin/Debug/netcoreapp2.1/cqhttp.Cyan.dll</HintPath>
+      <HintPath>../cqhttp.Cyan/cqhttp.Cyan/bin/Debug/netcoreapp3.1/cqhttp.Cyan.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

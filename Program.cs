@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using cqhttp.Cyan;
 using cqhttp.Cyan.Clients;
-using cqhttp.Cyan.Enums;
-using cqhttp.Cyan.Events.CQEvents;
 using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Events.CQResponses;
 using Newtonsoft.Json.Linq;
@@ -15,6 +12,7 @@ namespace CyanBot {
         public static long super_user;
     }
     class Program {
+        public static CQApiClient client;
 
         static void LoadCfg () {
             if (File.Exists ("config.json")) {
@@ -36,8 +34,9 @@ namespace CyanBot {
             throw new ArgumentNullException ("缺乏正常启动所需的配置文件或参数");
         }
         static void Main (string[] args) {
+            Dispatcher.Dispatcher.ParseCommand("/loadmodule AutoReply");
             LoadCfg ();
-            var client = new CQHTTPClient (
+            client = new CQHTTPClient (
                 access_url: Config.api_addr,
                 listen_port: Config.listen_port,
                 access_token: Config.access_token,
@@ -45,32 +44,12 @@ namespace CyanBot {
                 use_group_table: true
             );
             Console.WriteLine (client.self_id);
-            Logger.LogLevel = Verbosity.INFO;
-            FunctionPool.Initialize ();
 
             client.OnEvent += (cli, e) => {
                 if (e is MessageEvent) {
-                    (MessageType, long) endPoint = (MessageType.private_, 745679136);
-                    if (e is GroupMessageEvent) {
-                        endPoint = (
-                            MessageType.group_,
-                            (e as GroupMessageEvent).group_id
-                        );
-                    } else if (e is PrivateMessageEvent) {
-                        endPoint = (
-                            MessageType.private_,
-                            (e as PrivateMessageEvent).sender_id
-                        );
-                    } else if (e is DiscussMessageEvent) {
-                        endPoint = (
-                            MessageType.discuss_,
-                            (e as DiscussMessageEvent).discuss_id
-                        );
-                    }
                     Dispatcher.Dispatcher.Dispatch (
                         cli,
-                        e as MessageEvent,
-                        endPoint
+                        e as MessageEvent
                     );
                 }
                 return new EmptyResponse ();

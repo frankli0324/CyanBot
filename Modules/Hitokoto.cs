@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Messages;
 using Newtonsoft.Json.Linq;
 
-namespace CyanBot.Functions {
-    public class Hitokoto {
+namespace CyanBot.Modules {
+    class Hitokoto : Module {
         static List<string> types = new List<string> {
             "Anime",
             "Comic",
@@ -14,10 +15,10 @@ namespace CyanBot.Functions {
             "Internet",
             "Other"
         };
-        public static Message GetHitokoto (List<string> p) {
+        public static Message GetHitokoto (string[] p) {
             JObject result = new JObject ();
             string url = "https://v1.hitokoto.cn/?encode=json&charset=utf-8";
-            if (p.Count > 0) {
+            if (p.Length > 0) {
                 string helpMsg = "Usage: /{hitokoto/一言} [parameter]\n其中:parameter可为空或 ";
                 foreach (var i in types)
                     helpMsg += i + ',';
@@ -32,13 +33,10 @@ namespace CyanBot.Functions {
             } catch { return new Message ("网络错误"); }
             return new Message ($"{result["hitokoto"].ToString()}\n--{result["from"].ToString()}");
         }
-        public static void LoadModule () {
-            FunctionPool.onCommand.Add ("hitokoto", (p) => GetHitokoto (p.parameters));
-            FunctionPool.onCommand.Add ("一言", (p) => GetHitokoto (p.parameters));
-        }
-        public static void UnloadModule () {
-            FunctionPool.onCommand.Remove ("hitokoto");
-            FunctionPool.onCommand.Remove ("一言");
-        }
+
+        [OnCommand ("hitokoto")]
+        [OnCommand ("一言")]
+        public Message GetHitokoto (string cmd, string[] parameters, MessageEvent e) =>
+            GetHitokoto (parameters);
     }
 }
