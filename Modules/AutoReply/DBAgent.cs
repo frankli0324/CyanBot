@@ -5,63 +5,81 @@ using System.Text;
 
 namespace CyanBot.Modules.AutoReplyUtils {
     class DBAgent {
-
-        private static SQLHelper data;
-        public static void InitDB () {
-            if (File.Exists ("reply.db") == false)
-                SQLiteConnection.CreateFile ("reply.db");
-            data = new SQLHelper ("data source=reply.db;");
-            data.CreateTable (
-                "data",
-                new string[] { "key", "val", "create_by", "last_edit" },
-                new string[] { "text", "text", "text", "text" }
+        SQLiteConnection connection;
+        public DBAgent (string file) {
+            if (File.Exists (file) == false)
+                SQLiteConnection.CreateFile (file);
+            connection = new SQLiteConnection (
+                "DataSource=" + file
             );
+            connection.Open ();
+            using (SQLiteCommand command = new SQLiteCommand (connection)) {
+                command.CommandText =
+                    "CREATE TABLE IF NOT EXISTS data " +
+                    "(key text, val text, created_by text, last_edit text)";
+                command.ExecuteNonQuery ();
+            }
         }
-        public static void Insert (string w, string d, string user) {
+        public void Insert (string w, string d, string user) {
             string aw = Convert.ToBase64String (Encoding.UTF8.GetBytes (w));
             string ad = Convert.ToBase64String (Encoding.UTF8.GetBytes (d));
-            data.InsertValues ("data", new string[] { aw, ad, user, "" });
+            using (SQLiteCommand command = new SQLiteCommand (connection)) {
+                command.CommandText =
+                    "INSERT INTO data VALUES " +
+                    "(@KEY, @VAL, @USR, @LST)";
+                command.Parameters.AddRange (new SQLiteParameter[] {
+                    new SQLiteParameter ("@KEY", w),
+                        new SQLiteParameter ("@VAL", d),
+                        new SQLiteParameter ("@USR", user),
+                        new SQLiteParameter ("@LST", DateTime.Now.ToFileTimeUtc ().ToString ())
+                });
+                command.ExecuteNonQuery ();
+            }
         }
-        public static void Erase (string w) {
+        public void Erase (string w) {
             string aw = Convert.ToBase64String (Encoding.UTF8.GetBytes (w));
-            data.DeleteValuesAND (
-                "data",
-                new string[] { "key" },
-                new string[] { aw },
-                new string[] { "=" }
-            );
+            using (SQLiteCommand command = new SQLiteCommand (connection)) {
+                command.CommandText = "DELETE FROM data WHERE key=@KEY";
+                command.Parameters.AddWithValue ("@KEY", w);
+                command.ExecuteNonQuery ();
+            }
         }
-        public static void Update (string w, string d, string user) {
+        public void Update (string w, string d, string user) {
             string aw = Convert.ToBase64String (Encoding.UTF8.GetBytes (w));
             string ad = Convert.ToBase64String (Encoding.UTF8.GetBytes (d));
-            data.UpdateValues ("data",
-                new string[] { "val", "last_edit" }, new string[] { ad, user }, "key", aw);
+            using (SQLiteCommand command = new SQLiteCommand (connection)) {
+                command.CommandText =
+                    "UPDATE data SET " +
+                    "val=@VAL, created_by=@USR, last_edit=@LST " +
+                    "WHERE key=@KEY";
+                command.Parameters.AddRange (new SQLiteParameter[] {
+                    new SQLiteParameter ("@KEY", w),
+                        new SQLiteParameter ("@VAL", d),
+                        new SQLiteParameter ("@USR", user),
+                        new SQLiteParameter ("@LST", DateTime.Now.ToFileTimeUtc ().ToString ())
+                });
+                command.ExecuteNonQuery ();
+            }
         }
-        public static bool isExist (string w) { //emmmmm这里写的丑是因为刚才没仔细想sql该咋写
+        public bool isExist (string w) {
             string aw = Convert.ToBase64String (Encoding.UTF8.GetBytes (w));
-            SQLiteDataReader d = data.ReadTable (
-                "data",
-                new string[] { "val" },
-                new string[] { "key" },
-                new string[] { "=" },
-                new string[] { $"\'{aw}\'" }
-            );
-            if (d.Read ()) { return true; } else { return false; }
+            using (SQLiteCommand command = new SQLiteCommand (connection)) {
+                command.CommandText =
+                    "SELECT true WHERE EXISTS (SELECT * FROM data WHERE key=@KEY)";
+                command.Parameters.AddWithValue ("@KEY", w);
+                return command.ExecuteReader ().Read ();
+            }
         }
-        public static string Lookup (string w) {
-            string aw = Convert.ToBase64String (Encoding.UTF8.GetBytes (w));
-            SQLiteDataReader d = data.ReadTable (
-                "data",
-                new string[] { "val" },
-                new string[] { "key" },
-                new string[] { "=" },
-                new string[] { $"\'{aw}\'" }
-            );
-            string ret = "";
-            while (d.Read ())
-                ret = d["val"].ToString ();
-            ret = Encoding.UTF8.GetString (Convert.FromBase64String (ret));
-            return ret;
+        public string Lookup (string w) {
+            using (SQLiteCommand command = new SQLiteCommand (connection)) {
+                command.CommandText =
+                    "SELECT val FROM data " +
+                    "WHERE key=@KEY";
+                command.Parameters.AddWithValue ("@KEY", w);
+                var reader = command.ExecuteReader ();
+                reader.Read ();
+                return reader.GetString (0);
+            }
         }
     }
 }

@@ -7,34 +7,33 @@ using CyanBot.Modules.AutoReplyUtils;
 
 namespace CyanBot.Modules {
     public class AutoReply : Module {
-        static AutoReply () {
-            DBAgent.InitDB ();
-        }
+        static DBAgent db = new DBAgent ("reply.db");
         public static Message Insert (string[] p, long sender, bool force = false) {
             if (p.Length != 2) {
                 return new Message (new ElementText ("Usage: /teach {a} {b}\n其中a, b若含空格, 应用英文引号包括"));
             }
-            if (DBAgent.isExist (p[0])) {
+            if (db.isExist (p[0])) {
                 if (force)
-                    DBAgent.Update (p[0], p[1], sender.ToString ());
+                    db.Update (p[0], p[1], sender.ToString ());
                 else
                     return new Message (new ElementText ("我已经被安排过这句话了！"));
             }
-            DBAgent.Insert (p[0], p[1], sender.ToString ());
+            db.Insert (p[0], p[1], sender.ToString ());
             return new Message (new ElementText ("谢谢你，我学会了，你呢?"));
         }
         public static Message Reply (string p) {
-            if (DBAgent.isExist (p))
-                return new Message (DBAgent.Lookup (p));
+            if (db.isExist (p))
+                return new Message (db.Lookup (p));
             throw new KeyNotFoundException ();
         }
         public static Message Delete (string p) {
-            if (DBAgent.isExist (p)) {
-                DBAgent.Erase (p);
+            if (db.isExist (p)) {
+                db.Erase (p);
                 return new Message (new ElementText ("我。。忘了什么？"));
             }
             return new Message (new ElementText ("我本来就不知道这句话，那你叫我忘掉啥"));
         }
+
         [OnCommand ("teach")]
         public Message Teach (string cmd, string[] parameters, MessageEvent e) =>
             Insert (parameters, e.sender.user_id);
@@ -51,7 +50,6 @@ namespace CyanBot.Modules {
                 return new Message (new ElementText ("干嘛?"));
             }
         }
-
         [OnCommand ("delete")]
         public Message Delete (string cmd, string[] parameters, MessageEvent e) {
             try {
