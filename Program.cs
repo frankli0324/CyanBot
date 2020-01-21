@@ -1,12 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using cqhttp.Cyan.Clients;
-using cqhttp.Cyan.Enums;
-using cqhttp.Cyan.Events.CQEvents;
 using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Events.CQResponses;
-using cqhttp.Cyan.Messages;
 using Newtonsoft.Json.Linq;
 
 namespace CyanBot {

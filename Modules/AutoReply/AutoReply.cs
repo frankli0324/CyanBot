@@ -50,6 +50,7 @@ namespace CyanBot.Modules {
                 return new Message (new ElementText ("干嘛?"));
             }
         }
+
         [OnCommand ("delete")]
         public Message Delete (string[] parameters, MessageEvent e) {
             try {

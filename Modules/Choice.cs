@@ -9,7 +9,7 @@ using cqhttp.Cyan.Messages.CQElements;
 inspired by https://coin.keybrl.com/
 */
 namespace CyanBot.Modules {
-    public class Choice : Module{
+    public class Choice : Module {
         static T RandomChoice<T> (IEnumerable<T> source) {
             if (source == null) {
                 throw new ArgumentNullException ("source");
