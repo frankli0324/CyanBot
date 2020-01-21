@@ -4,13 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="cqhttp.Cyan">
-      <HintPath>../cqhttp.Cyan/cqhttp.Cyan/bin/Debug/netcoreapp3.1/cqhttp.Cyan.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="cqhttp.Cyan" Version="2.1.2" />
+    <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="SmartThreadPool.NetCore" Version="2.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.110.0" />
   </ItemGroup>
-  
 </Project>
