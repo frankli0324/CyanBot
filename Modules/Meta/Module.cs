@@ -18,7 +18,6 @@ namespace CyanBot.Modules {
             var cmd_funcs = this.GetType ()
                 .GetMethodsBySig (
                     typeof (Message),
-                    typeof (string),
                     typeof (string[]),
                     typeof (MessageEvent)
                 );
@@ -48,7 +47,6 @@ namespace CyanBot.Modules {
         ) {
             if (on_commands.ContainsKey (command)) {
                 return (Message) on_commands[command].Invoke (this, new object[] {
-                    command,
                     parameter,
                     raw_event
                 });

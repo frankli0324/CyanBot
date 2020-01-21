@@ -35,13 +35,13 @@ namespace CyanBot.Modules {
         }
 
         [OnCommand ("teach")]
-        public Message Teach (string cmd, string[] parameters, MessageEvent e) =>
+        public Message Teach (string[] parameters, MessageEvent e) =>
             Insert (parameters, e.sender.user_id);
         [OnCommand ("force")]
-        public Message Force (string cmd, string[] parameters, MessageEvent e) =>
+        public Message Force (string[] parameters, MessageEvent e) =>
             Insert (parameters, e.sender.user_id, true);
         [OnCommand ("reply")]
-        public Message Reply (string cmd, string[] parameters, MessageEvent e) {
+        public Message Reply (string[] parameters, MessageEvent e) {
             try {
                 return Reply (parameters[0]);
             } catch (KeyNotFoundException) {
@@ -51,7 +51,7 @@ namespace CyanBot.Modules {
             }
         }
         [OnCommand ("delete")]
-        public Message Delete (string cmd, string[] parameters, MessageEvent e) {
+        public Message Delete (string[] parameters, MessageEvent e) {
             try {
                 return Delete (parameters[0]);
             } catch {

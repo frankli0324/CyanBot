@@ -29,7 +29,7 @@ namespace CyanBot.Modules {
         System.Timers.Timer t = new System.Timers.Timer (3600000);
 
         [OnCommand ("start_alarm")]
-        public Message StartAlarm (string cmd, string[] parameters, MessageEvent e) {
+        public Message StartAlarm (string[] parameters, MessageEvent e) {
             if (isStarted == false) {
                 Task.Run (() => {
                     var next_hour = DateTime.UtcNow.AddHours (1);
@@ -59,7 +59,7 @@ namespace CyanBot.Modules {
         }
 
         [OnCommand ("stop_alarm")]
-        public Message StopAlarm (string cmd, string[] parameters, MessageEvent e) {
+        public Message StopAlarm (string[] parameters, MessageEvent e) {
             if (alarmList.Contains (e.GetEndpoint ()))
                 alarmList.Remove (e.GetEndpoint ());
             return new cqhttp.Cyan.Messages.Message (new ElementText ("停止报时"));

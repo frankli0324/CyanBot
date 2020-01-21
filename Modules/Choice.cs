@@ -61,7 +61,7 @@ namespace CyanBot.Modules {
         }
 
         [OnCommand ("roll")]
-        public Message Roll (string cmd, string[] parameters, MessageEvent e) {
+        public Message Roll (string[] parameters, MessageEvent e) {
             string result;
             if (parameters.Length == 0) result = "rollable: 座位/吃饭";
             else

@@ -8,8 +8,10 @@ namespace CyanBot.Modules {
     class Internal : Module {
         List<long> admins = new List<long> ();
         [OnCommand ("get_loaded")]
-        public Message GetLoaded (string cmd, string[] parameters, MessageEvent e) {
-            if (e.sender.user_id != Config.super_user && admins.Contains (e.sender.user_id) == false)
+        public Message GetLoaded (string[] parameters, MessageEvent e) {
+            if (e.sender.user_id != long.Parse (
+                    Program.Globals["super_user"]
+                ) && admins.Contains (e.sender.user_id) == false)
                 return new Message ("Permission Denied");
             StringBuilder module_list = new StringBuilder ();
             foreach (var i in loaded_modules.Keys)
@@ -18,38 +20,49 @@ namespace CyanBot.Modules {
         }
 
         [OnCommand ("load_module")]
-        public Message LoadModule (string cmd, string[] parameters, MessageEvent e) {
-            string module = parameters[0];
-            if (e.sender.user_id != Config.super_user && admins.Contains (e.sender.user_id) == false)
+        public Message LoadModule (string[] parameters, MessageEvent e) {
+            StringBuilder result = new StringBuilder ();
+            if (e.sender.user_id != long.Parse (
+                    Program.Globals["super_user"]
+                ) && admins.Contains (e.sender.user_id) == false)
                 return new Message ("Permission Denied");
-            if (loaded_modules.ContainsKey (module))
-                return new Message ("Already loaded");
-            Type module_type = Type.GetType (this.GetType ().Namespace + '.' + module);
-            if (module_type == null)
-                return new Message ("No such module");
-            loaded_modules.Add (
-                module,
-                (Module) module_type
-                .GetConstructor (new Type[] { })
-                .Invoke (new object[] { })
-            );
-            return new Message ($"Loaded Module: \"{module}\"");
+            foreach (var module in parameters) {
+                if (loaded_modules.ContainsKey (module)) {
+                    result.AppendLine ($"Already loaded {module}");
+                    continue;
+                }
+                Type module_type = Type.GetType (this.GetType ().Namespace + '.' + module);
+                if (module_type == null) {
+                    result.AppendLine ($"No such module {module}");
+                    continue;
+                }
+                loaded_modules.Add (
+                    module,
+                    (Module) module_type
+                    .GetConstructor (new Type[] { })
+                    .Invoke (new object[] { })
+                );
+                result.AppendLine ($"Loaded Module: {module}");
+            }
+            return new Message (result.ToString ().TrimEnd ());
         }
 
         [OnCommand ("unload_module")]
-        public Message UnloadModule (string cmd, string[] parameters, MessageEvent e) {
+        public Message UnloadModule (string[] parameters, MessageEvent e) {
             string module = parameters[0];
-            if (e.sender.user_id != Config.super_user && admins.Contains (e.sender.user_id) == false)
+            if (e.sender.user_id != long.Parse (
+                    Program.Globals["super_user"]
+                ) && admins.Contains (e.sender.user_id) == false)
                 return new Message ("Permission Denied");
             if (loaded_modules.ContainsKey (module) == false)
                 return new Message ("Module not loaded");
             loaded_modules.Remove (module);
-            return new Message ($"Unloaded Module: \"{module}\"");
+            return new Message ($"Unloaded Module: {module}");
         }
 
         [OnCommand ("set_admin")]
-        public Message SetAdmin (string cmd, string[] parameters, MessageEvent e) {
-            if (e.sender.user_id != Config.super_user)
+        public Message SetAdmin (string[] parameters, MessageEvent e) {
+            if (e.sender.user_id != long.Parse (Program.Globals["super_user"]))
                 return new Message ("Permission Denied");
             foreach (var i in parameters) {
                 long admin = long.Parse (i);

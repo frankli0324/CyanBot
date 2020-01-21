@@ -36,7 +36,7 @@ namespace CyanBot.Modules {
 
         [OnCommand ("hitokoto")]
         [OnCommand ("一言")]
-        public Message GetHitokoto (string cmd, string[] parameters, MessageEvent e) =>
+        public Message GetHitokoto (string[] parameters, MessageEvent e) =>
             GetHitokoto (parameters);
     }
 }
