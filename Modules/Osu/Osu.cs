@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -13,8 +14,8 @@ namespace CyanBot.Modules {
 
         [OnCommand ("bind")]
         public Message BindUser (string[] parameters, MessageEvent e) {
-            if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
-                return new Message ("只能在XDOSU群里用");
+            // if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
+            //     return new Message ("只能在XDOSU群里用");
             if (parameters.Length != 1) return new Message ("specify username");
             Profiles.Bind (e.sender.user_id, parameters[0]);
             return GetPlayerPP (new string[] { }, e);
@@ -22,32 +23,29 @@ namespace CyanBot.Modules {
 
         [OnCommand ("get_pp")]
         public Message GetPlayerPP (string[] parameters, MessageEvent e) {
-            if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
-                return new Message ("只能在XDOSU群里用");
-            var result = parameters.Length == 1 ?
-                Profiles.Get (parameters[0]) :
-                Profiles.Get (e.sender.user_id);
-            if (result == null) {
-                if (parameters.Length == 1)
-                    return new Message (Profiles.Fetch (parameters[0]).pp_raw);
-                else return new Message ("not binded yet");
+            // if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
+            //     return new Message ("只能在XDOSU群里用");
+            if (parameters.Length > 0) {
+                Console.WriteLine (parameters[0]);
+                return new Message (Profiles.Get (parameters[0]).pp_raw);
             }
-            return new Message (result.pp_raw);
+            var result = Profiles.Get (e.sender.user_id);
+            return new Message (result != null?result.pp_raw: "not binded yet");
         }
 
         [OnCommand ("ranklist")]
         public Message GetRanklist (string[] parameters, MessageEvent e) {
-            if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
-                return new Message ("只能在XDOSU群里用");
+            // if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
+            //     return new Message ("只能在XDOSU群里用");
             Message result = new Message ();
             var sorted = Profiles.GetAll ().OrderBy (x => int.Parse (x.pp_rank));
             foreach (var p in sorted) {
                 result += new ElementAt (p.qq_id);
-                result += new ElementText (string.Concat (
-                    ":", p.username, " ", p.pp_raw, "\n"
+                result += new ElementText (string.Join ('\n',
+                    string.Concat (":", p.username, " ", p.pp_raw)
                 ));
             }
-            result.data.Last ().data["text"].TrimEnd ('\n', '\r', ' ');
+            result.data.Last ().data["text"].TrimEnd ();
             return result;
         }
 
