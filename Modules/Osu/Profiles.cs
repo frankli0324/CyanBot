@@ -24,9 +24,9 @@ namespace CyanBot.Modules.OsuUtils {
         static HttpClient client = new HttpClient ();
         static Dictionary<long, DateTime> last_update = new Dictionary<long, DateTime> ();
         static int minute_calls = 0;
-        async static Task<JToken> Call (string path, params (string, string) [] parameters) {
+        async static Task<JToken> Call (string path, params (string, string)[] parameters) {
             var wait = Task.Run (() => { while (minute_calls > 60) Thread.Sleep (1000); });
-            var p = new List < (string, string) > (parameters);
+            var p = new List<(string, string)> (parameters);
             p.Add (("k", Program.Globals["osu_token"]));
             StringBuilder url = new StringBuilder ("https://osu.ppy.sh/api/");
             url.Append (path.Trim ('/'));

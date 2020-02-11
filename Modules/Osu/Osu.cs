@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -25,12 +24,22 @@ namespace CyanBot.Modules {
         public Message GetPlayerPP (string[] parameters, MessageEvent e) {
             // if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
             //     return new Message ("只能在XDOSU群里用");
-            if (parameters.Length > 0) {
-                Console.WriteLine (parameters[0]);
-                return new Message (Profiles.Get (parameters[0]).pp_raw);
-            }
-            var result = Profiles.Get (e.sender.user_id);
-            return new Message (result != null?result.pp_raw: "not binded yet");
+            var profile = parameters.Length > 0 ?
+                Profiles.Get (parameters[0]) :
+                Profiles.Get (e.sender.user_id);
+            return new Message (profile != null ? profile.pp_raw : "not binded yet");
+        }
+
+        [OnCommand ("get_profile")]
+        public Message GetPlayerProfile (string[] parameters, MessageEvent e) {
+            var profile = parameters.Length > 0 ?
+                Profiles.Get (parameters[0]) :
+                Profiles.Get (e.sender.user_id);
+            return new Message (string.Join ('\n', new string[] {
+                "   pp:" + profile.pp_raw,
+                " rank:" + profile.pp_rank,
+                "level:" + profile.level
+            }));
         }
 
         [OnCommand ("ranklist")]
@@ -53,13 +62,13 @@ namespace CyanBot.Modules {
         public Message GetBeatmap (string[] parameters, MessageEvent e) {
             var result = JToken.Parse (client.GetStringAsync (
                 "https://osusearch.com/query/?" +
-                string.Join ('&', new List < (string, string) > (new (string, string) [] {
+                string.Join ('&', new List<(string, string)> (new (string, string)[] {
                     ("title", parameters[0]),
                     ("modes", "Standard"),
                     ("statuses", "Ranked")
                 }).ConvertAll<string> (
                     (o) => string.Concat (o.Item1, '=', o.Item2)
-                ))).Result) ["beatmaps"][0];
+                ))).Result)["beatmaps"][0];
             return new Message (new ElementShare (
                 "https://osu.ppy.sh/b/" + result["beatmap_id"],
                 result["title"] + " by " + result["artist"],
