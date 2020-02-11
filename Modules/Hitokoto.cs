@@ -24,14 +24,14 @@ namespace CyanBot.Modules {
                     helpMsg += i + ',';
                 if (p[0] == "help") return new Message (helpMsg.TrimEnd (',') + " 其中之一");
                 else if (types.Contains (p[0]))
-                    url += $"&c={Convert.ToChar('a' + types.IndexOf(p[0]))}";
+                    url += $"&c={Convert.ToChar ('a' + types.IndexOf (p[0]))}";
             }
             try {
                 using (var http = new System.Net.Http.HttpClient ()) {
                     result = JObject.Parse (http.GetStringAsync (url).Result);
                 }
             } catch { return new Message ("网络错误"); }
-            return new Message ($"{result["hitokoto"].ToString()}\n--{result["from"].ToString()}");
+            return new Message ($"{result["hitokoto"].ToString ()}\n--{result["from"].ToString ()}");
         }
 
         [OnCommand ("hitokoto")]
