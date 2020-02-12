@@ -15,7 +15,7 @@ namespace CyanBot.Modules {
             new HashSet<(MessageType, long)> ();
         static HttpClient client = new HttpClient ();
         static Dictionary<string, Area> data = new Dictionary<string, Area> ();
-        static string old_title = "";
+        static HashSet<string> old_news = new HashSet<string> ();
         static System.Threading.Timer t = new System.Threading.Timer (async (o) => {
             {
                 string page = await client.GetStringAsync (
@@ -44,8 +44,8 @@ namespace CyanBot.Modules {
                 string url = obj["url"].ToObject<string> ();
                 string media = obj["media"].ToObject<string> ();
                 string title = obj["title"].ToObject<string> ();
-                if (old_title != title) {
-                    old_title = title;
+                if (!old_news.Contains (title)) {
+                    old_news.Add (title);
                     string msg = string.Join ('\n', title, url, "from:" + media);
                     foreach (var endpoint in endpoints)
                         await Program.client.SendTextAsync (
@@ -69,7 +69,7 @@ namespace CyanBot.Modules {
                 // d (sub.name, "dead", "死亡");
             }
             if (msg.Length > 0)
-                return new Message (msg.ToString ());
+                return new Message (msg.ToString ().TrimEnd ());
             else return null;
         }
 
