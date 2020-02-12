@@ -7,7 +7,7 @@ using CyanBot.Modules.AutoReplyUtils;
 
 namespace CyanBot.Modules {
     public class AutoReply : Module {
-        static DBAgent db = new DBAgent ("reply.db");
+        static DBAgent db = new DBAgent ();
         public static Message Insert (string[] p, long sender, bool force = false) {
             if (p.Length != 2) {
                 return new Message (new ElementText ("Usage: /teach {a} {b}\n其中a, b若含空格, 应用英文引号包括"));
@@ -22,8 +22,9 @@ namespace CyanBot.Modules {
             return new Message (new ElementText ("谢谢你，我学会了，你呢?"));
         }
         public static Message Reply (string p) {
-            if (db.isExist (p))
-                return new Message (db.Lookup (p));
+            var r = db.Lookup (p);
+            if (r != null)
+                return new Message (r.reply);
             throw new KeyNotFoundException ();
         }
         public static Message Delete (string p) {
@@ -69,7 +70,9 @@ namespace CyanBot.Modules {
                 if (Firewall.waf (e.GetEndpoint (), raw_text))
                     return Reply (raw_text);
                 else {
-                    Console.WriteLine ($"[WARNING] {e.GetEndpoint()} triggered firewall");
+                    cqhttp.Cyan.Utils.Logger.GetLogger("AutoReply").Info(
+                        $"{e.GetEndpoint ()} triggered firewall"
+                    );
                 }
             } catch (KeyNotFoundException) { }
 

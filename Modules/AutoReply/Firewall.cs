@@ -9,7 +9,7 @@ namespace CyanBot.Modules.AutoReplyUtils {
             if (!set.Contains (s))
                 set.Add (s);
             Task.Run (() => {
-                Thread.Sleep (3000);
+                Thread.Sleep (10000);
                 set.Remove (s);
             });
         }
