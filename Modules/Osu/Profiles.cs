@@ -45,12 +45,12 @@ namespace CyanBot.Modules.OsuUtils {
                 await client.GetStringAsync (url.ToString ())
             );
         }
-        static LiteDB.LiteDatabase db = new LiteDB.LiteDatabase (
-            "Filename=osu.db;mode=Exclusive"
+        static readonly LiteDB.LiteDatabase db = new LiteDB.LiteDatabase (
+            "Filename=osu.db"
         );
-        static LiteDB.LiteCollection<Profile> col {
-            get { return db.GetCollection<Profile> ("osu_profiles"); }
-        }
+        static readonly LiteDB.LiteCollection<Profile> col = db.GetCollection<Profile> (
+            "osu_profiles"
+        );
         static Dictionary<string, string> mode_code = new Dictionary<string, string> {
             ["std"] = "0",
             ["taiko"] = "1",

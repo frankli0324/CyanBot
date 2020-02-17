@@ -6,14 +6,8 @@ using Newtonsoft.Json.Linq;
 
 namespace CyanBot.Modules {
     class Hitokoto : Module {
-        static List<string> types = new List<string> {
-            "Anime",
-            "Comic",
-            "Game",
-            "Novel",
-            "Original",
-            "Internet",
-            "Other"
+        static readonly List<string> types = new List<string> {
+            "Anime", "Comic", "Game", "Novel", "Original", "Internet", "Other"
         };
         public static Message GetHitokoto (string[] p) {
             JObject result = new JObject ();
@@ -31,7 +25,7 @@ namespace CyanBot.Modules {
                     result = JObject.Parse (http.GetStringAsync (url).Result);
                 }
             } catch { return new Message ("网络错误"); }
-            return new Message ($"{result["hitokoto"].ToString ()}\n--{result["from"].ToString ()}");
+            return new Message ($"{result["hitokoto"]}\n--{result["from"]}");
         }
 
         [OnCommand ("hitokoto")]

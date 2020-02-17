@@ -9,7 +9,7 @@ using cqhttp.Cyan.Messages.CQElements;
 
 namespace CyanBot.Modules {
     public class Time : Module {
-        static string[] pics = {
+        static readonly string[] pics = {
             "https://i.loli.net/2019/04/20/5cba0323b4cdb.png", //12
             "https://i.loli.net/2019/04/20/5cba0332dd371.png", //1
             "https://i.loli.net/2019/04/20/5cba03160903c.png", //2
@@ -23,10 +23,10 @@ namespace CyanBot.Modules {
             "https://i.loli.net/2019/04/20/5cba03172f768.png", //10
             "https://i.loli.net/2019/04/20/5cba03198cab3.png" //11
         };
-        HashSet < (MessageType, long) > alarmList =
+        readonly HashSet < (MessageType, long) > alarmList =
             new HashSet < (MessageType, long) > ();
         bool isStarted = false;
-        System.Timers.Timer t = new System.Timers.Timer (3600000);
+        readonly System.Timers.Timer t = new System.Timers.Timer (3600000);
 
         [OnCommand ("start_alarm")]
         public Message StartAlarm (string[] parameters, MessageEvent e) {
@@ -62,7 +62,7 @@ namespace CyanBot.Modules {
         public Message StopAlarm (string[] parameters, MessageEvent e) {
             if (alarmList.Contains (e.GetEndpoint ()))
                 alarmList.Remove (e.GetEndpoint ());
-            return new cqhttp.Cyan.Messages.Message (new ElementText ("停止报时"));
+            return new Message (new ElementText ("停止报时"));
         }
     }
 }
