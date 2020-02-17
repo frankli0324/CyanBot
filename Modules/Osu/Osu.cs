@@ -36,8 +36,8 @@ namespace CyanBot.Modules {
                 Profiles.Get (parameters[0]) :
                 Profiles.Get (e.sender.user_id);
             return new Message (string.Join ('\n', new string[] {
-                "   pp:" + profile.pp_raw,
-                " rank:" + profile.pp_rank,
+                "pp:" + profile.pp_raw,
+                "rank:" + profile.pp_rank,
                 "level:" + profile.level
             }));
         }
@@ -46,16 +46,13 @@ namespace CyanBot.Modules {
         public Message GetRanklist (string[] parameters, MessageEvent e) {
             // if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
             //     return new Message ("只能在XDOSU群里用");
-            Message result = new Message ();
-            var sorted = Profiles.GetAll ().OrderBy (x => int.Parse (x.pp_rank));
-            foreach (var p in sorted) {
-                result += new ElementAt (p.qq_id);
-                result += new ElementText (string.Join ('\n',
-                    string.Concat (":", p.username, " ", p.pp_raw)
-                ));
-            }
-            result.data.Last ().data["text"].TrimEnd ();
-            return result;
+            return new Message(string.Join ('\n',
+                Profiles.GetAll ().OrderBy (
+                    x => int.Parse (x.pp_rank)
+                ).Select (
+                    x => string.Join(": ", x.username, x.pp_raw)
+                )
+            ));
         }
 
         [OnCommand ("get_beatmap")]
