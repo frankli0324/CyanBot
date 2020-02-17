@@ -7,8 +7,16 @@
 ## Deployment
 
 `dotnet publish -c Release`, deploy the `bin/Release/netcoreapp3.1/publish` to your server  
-create `config.json` with the sample  
+
+create following files before execution:
+
+file        | description
+----------- | ------------------------------------------------------------------------
+config.json | see `config.json.sample`
+bots        | messages sent by users whose ID is present in this file will be ignored
+
 fire up with `dotnet CyanBot.dll` or simply `./CyanBot`
+
 
 ## Development
 
