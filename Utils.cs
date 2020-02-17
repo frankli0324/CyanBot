@@ -18,6 +18,13 @@ namespace CyanBot {
     [AttributeUsage (AttributeTargets.Method, AllowMultiple = true)]
     public class OnMessageAttribute : Attribute { }
     public static class Extensions {
+        public static void Deconstruct (
+            this string[] t,
+            out string a, out string b
+        ) {
+            a = t[0];
+            b = t[1];
+        }
         public static IEnumerable<MethodInfo> GetMethodsBySig (this Type type, Type returnType, params Type[] parameterTypes) {
             return type.GetMethods ().Where ((m) => {
                 if (m.ReturnType != returnType) return false;
