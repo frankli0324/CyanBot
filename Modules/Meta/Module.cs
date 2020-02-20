@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using cqhttp.Cyan.Events.CQEvents.Base;
 using cqhttp.Cyan.Messages;
 
@@ -42,14 +43,17 @@ namespace CyanBot.Modules {
                     on_messages = func;
             }
         }
-        public Message InvokeCommand (
+        public async Task<Message> InvokeCommand (
             string command, string[] parameter, MessageEvent raw_event
         ) {
             if (on_commands.ContainsKey (command)) {
-                return (Message) on_commands[command].Invoke (this, new object[] {
+                Message message = null;
+                await Task.Run (() =>
+                message = (Message) on_commands[command].Invoke (this, new object[] {
                     parameter,
                     raw_event
-                });
+                }));
+                return message;
             }
             return new Message ();
         }

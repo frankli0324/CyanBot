@@ -34,11 +34,10 @@ namespace CyanBot {
         }
         static void Main (string[] args) {
             LoadCfg ();
-            client.OnEvent += (cli, e) => {
+            client.OnEventAsync += async (cli, e) => {
                 if (e is MessageEvent) {
-                    Dispatcher.Dispatcher.Dispatch (
-                        cli,
-                        e as MessageEvent
+                    await Dispatcher.Dispatcher.Dispatch (
+                        cli, e as MessageEvent
                     );
                 }
                 return new EmptyResponse ();

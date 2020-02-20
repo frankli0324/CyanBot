@@ -9,7 +9,7 @@ using CyanBot.Modules;
 namespace CyanBot.Dispatcher {
     class CommandErrorException : Exception { };
     public class Dispatcher {
-        public static void Dispatch (
+        public async static Task Dispatch (
             CQApiClient cli,
             MessageEvent e
         ) {
@@ -20,29 +20,27 @@ namespace CyanBot.Dispatcher {
                 Console.WriteLine (" is bot");
                 return;
             }
-            Task.Run(async () => {
-                try {
-                    string raw_text = "";
-                    foreach (var i in e.message.data)
-                        if (i.type == "text") raw_text += i.data["text"];
-                    var command = ParseCommand (raw_text);
-                    List<Task> to_run = new List<Task> ();
-                    if (Module.loaded_modules.Values.All ((mod) => {
-                        var result = mod.InvokeCommand (command.Item1, command.Item2, e);
-                        if (result.data.Count == 0)
-                            return true;
-                        to_run.Append (cli.SendMessageAsync (e.GetEndpoint (), result));
-                        return false;
-                    })) { throw new CommandErrorException (); }
-                    await Task.WhenAll (to_run);
-                } catch (CommandErrorException) {
-                    foreach (var i in Module.loaded_modules.Values) {
-                        var ret = i.InvokeMessage (e.message, e);
-                        if (ret.data.Count != 0) //can respond
-                            await cli.SendMessageAsync (e.GetEndpoint (), ret);
-                    }
+            try {
+                string raw_text = "";
+                foreach (var i in e.message.data)
+                    if (i.type == "text") raw_text += i.data["text"];
+                var command = ParseCommand (raw_text);
+                List<Task> to_run = new List<Task> ();
+                if (await Module.loaded_modules.Values.AllAsync (async (mod) => {
+                    var result = await mod.InvokeCommand (command.Item1, command.Item2, e);
+                    if (result.data.Count == 0)
+                        return true;
+                    to_run.Append (cli.SendMessageAsync (e.GetEndpoint (), result));
+                    return false;
+                })) { throw new CommandErrorException (); }
+                await Task.WhenAll (to_run);
+            } catch (CommandErrorException) {
+                foreach (var i in Module.loaded_modules.Values) {
+                    var ret = i.InvokeMessage (e.message, e);
+                    if (ret.data.Count != 0) //can respond
+                        await cli.SendMessageAsync (e.GetEndpoint (), ret);
                 }
-            });
+            }
         }
         public static (string, string[]) ParseCommand (string raw) {
             try {

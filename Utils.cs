@@ -40,23 +40,17 @@ namespace CyanBot {
                 return true;
             });
         }
-        public static (MessageType, long) GetEndpoint (this MessageEvent e) {
-            if (e is GroupMessageEvent) {
-                return (
-                    MessageType.group_,
-                    (e as GroupMessageEvent).group_id
-                );
-            } else if (e is PrivateMessageEvent) {
-                return (
-                    MessageType.private_,
-                    (e as PrivateMessageEvent).sender_id
-                );
-            } else if (e is DiscussMessageEvent) {
-                return (
-                    MessageType.discuss_,
-                    (e as DiscussMessageEvent).discuss_id
-                );
-            } else return (MessageType.private_, 745679136);
+        public static async System.Threading.Tasks.Task<bool> AllAsync<TSource> (this IEnumerable<TSource> source, Func<TSource, System.Threading.Tasks.Task<bool>> predicate) {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            if (predicate == null)
+                throw new ArgumentNullException (nameof (predicate));
+            foreach (var item in source) {
+                var result = await predicate (item);
+                if (!result)
+                    return false;
+            }
+            return true;
         }
     }
 }
