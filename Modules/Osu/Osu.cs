@@ -46,13 +46,12 @@ namespace CyanBot.Modules {
         public Message GetRanklist (string[] parameters, MessageEvent e) {
             // if (e.GetEndpoint () != (cqhttp.Cyan.Enums.MessageType.group_, 915383167))
             //     return new Message ("只能在XDOSU群里用");
-            return new Message(string.Join ('\n',
-                Profiles.GetAll ().OrderBy (
+            var res = Profiles.GetAll ().OrderBy (
                     x => int.Parse (x.pp_rank)
                 ).Select (
-                    x => string.Join(": ", x.username, x.pp_raw)
-                )
-            ));
+                    x => string.Join (": ", x.username, x.pp_raw)
+                ).ToArray ();
+            return new Message (string.Join ('\n', res));
         }
 
         [OnCommand ("get_beatmap")]
