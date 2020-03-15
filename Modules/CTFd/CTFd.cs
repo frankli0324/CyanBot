@@ -16,27 +16,37 @@ namespace CyanBot.Modules {
 
         [OnCommand ("monitor")]
         public Message Monitor (string[] parameters, MessageEvent e) {
+            if (parameters.Length < 3) return new Message ("/monitor [CTFd address] [username] [password] <group id(optional)>");
+            (MessageType, long) endpoint =
+                parameters.Length == 4 ?
+                    (MessageType.group_, long.Parse (parameters[3])) :
+                    e.GetEndpoint ();
             string host = parameters[0];
-            var orig_client = clients.GetValueOrDefault (e.GetEndpoint (), null);
+            var orig_client = clients.GetValueOrDefault (endpoint, null);
             if (orig_client != null) { orig_client.Dispose (); }
-            var orig_token = tokens.GetValueOrDefault (e.GetEndpoint (), null);
+            var orig_token = tokens.GetValueOrDefault (endpoint, null);
             if (orig_token != null) { orig_token.Cancel (); orig_token.Dispose (); }
-            tokens[e.GetEndpoint ()] = new CancellationTokenSource ();
-            clients[e.GetEndpoint ()] = new CTFdClient (host);
+            tokens[endpoint] = new CancellationTokenSource ();
+            clients[endpoint] = new CTFdClient (host);
             Task.Run (async () => {
-                await clients[e.GetEndpoint ()].Login (parameters[1], parameters[2]);
-                var client = clients[e.GetEndpoint ()];
-                await foreach (var i in clients[e.GetEndpoint ()].GetEvents ()) {
-                    var message = Get.Message (i);
+                await clients[endpoint].Login (parameters[1], parameters[2]);
+                var client = clients[endpoint];
+                await foreach (var i in clients[endpoint].GetEvents ()) {
+                    if(tokens[endpoint].Token.IsCancellationRequested)
+                        break;
+                    var message = await Get.Message (i, clients[endpoint]);
                     if (message != null)
                         await Program.client.SendMessageAsync (
-                            e.GetEndpoint (), message
+                            endpoint, message
                         );
                 }
                 ;// syntax highlighting bug
-            }, tokens[e.GetEndpoint ()].Token);
+                clients[endpoint].Dispose ();
+                clients.Remove (endpoint);
+            }, tokens[endpoint].Token);
             return new Message ("started monitoring " + host);
         }
+
         [OnCommand ("cancel_monitor")]
         public Message Purge (string[] parameters, MessageEvent e) {
             if (tokens.ContainsKey (e.GetEndpoint ()))

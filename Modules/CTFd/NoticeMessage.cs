@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using cqhttp.Cyan.Messages;
 using Newtonsoft.Json.Linq;
 
@@ -5,10 +6,10 @@ namespace CyanBot.Modules.CTFdUtils {
     static class Get {
         static cqhttp.Cyan.Utils.Logger logger =
             cqhttp.Cyan.Utils.Logger.GetLogger ("CTFd");
-        public static Message Message (Event e) {
+        public async static Task<Message> Message (Event e, CTFdClient client = null) {
             switch (e.type) {
             case "challenge":
-                return FromChallenge (e.data);
+                return await FromChallenge (e.data, client);
             case "hint":
                 return null;
             case "ping":
@@ -22,11 +23,14 @@ namespace CyanBot.Modules.CTFdUtils {
                 return null;
             }
         }
-        static Message FromChallenge (string data) {
+        async static Task<Message> FromChallenge (string data, CTFdClient client = null) {
             var json = JToken.Parse (data);
             switch (json["type"].ToObject<string> ()) {
             case "challenge_solved":
-                return new Message ($"{json["user"]["name"]}做出了{json["challenge"]}");
+                var t = JToken.Parse (await (await client.GetAsync (
+                    "https://mssctf.xidian.edu.cn/api/v1/challenges/" + json["challenge"]
+                )).Content.ReadAsStringAsync());
+                return new Message ($"{json["user"]["name"]}做出了{t["data"]["name"]}");
             case "challenge_created":
                 break;
             case "challenge_updated":
