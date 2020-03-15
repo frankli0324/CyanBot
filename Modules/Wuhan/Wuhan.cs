@@ -35,12 +35,12 @@ namespace CyanBot.Modules {
                     data[country] = new Area (a);
                 }
             }
-            {
+            try {
                 string page = await client.GetStringAsync (
                     "https://interface.sina.cn/wap_api/wap_std_subject_components_list.d.json?url=https://news.sina.cn/zt_d/yiqing0121&page=2"
                 );
                 var obj = JToken.Parse (page);
-                obj = obj["result"]["data"]["components"][2]["data"][0];
+                obj = obj["result"]["data"]["components"][4]["data"][0];
                 string url = obj["url"].ToObject<string> ();
                 string media = obj["media"].ToObject<string> ();
                 string title = obj["title"].ToObject<string> ();
@@ -52,10 +52,10 @@ namespace CyanBot.Modules {
                             endpoint, msg
                         );
                 }
-            }
-        }, null, 0, 10000);
+            } catch { }
+        }, null, 0, 1000 * 60);
         static Message Diff (Area o, Area n) {
-            StringBuilder msg = new StringBuilder ();
+            StringBuilder msg = new StringBuilder ("近一小时内：");
             Action<string, string, string> d = (area, key, desc) => {
                 int new_cnt = o[area].total[key].ToObject<int> ();
                 int old_cnt = n[area].total[key].ToObject<int> ();
@@ -63,12 +63,14 @@ namespace CyanBot.Modules {
                     msg.AppendLine (area + "新增" + desc + (new_cnt - old_cnt) + "例");
             };
             foreach (var sub in o) {
-                d (sub.name, "confirm", "确诊");
-                d (sub.name, "suspect", "疑似");
-                d (sub.name, "heal", "治愈");
-                // d (sub.name, "dead", "死亡");
+                foreach (var s in new (string, string)[]{
+                    ("confirm", "确诊"),
+                    ("suspect", "疑似"),
+                    ("heal", "治愈")
+                })
+                    d (sub.name, s.Item1, s.Item2);
             }
-            if (msg.Length > 0)
+            if (msg.Length > "近一小时内：".Length)
                 return new Message (msg.ToString ().TrimEnd ());
             else return null;
         }
@@ -102,7 +104,7 @@ namespace CyanBot.Modules {
             foreach (var i in parameters)
                 if (root.ContainsKey (i))
                     root = root[i];
-            var stat = total?root.total:root.today;
+            var stat = total ? root.total : root.today;
             return new Message ((
                 root.name + (total ? "共计:\n" : "今日新增\n") +
                 (stat.confirmed () != 0 ? "确诊" + stat.confirmed () + "例\n" : "") +
@@ -118,7 +120,7 @@ namespace CyanBot.Modules {
             if (parameters.Length == 0 || !data.ContainsKey (parameters[0]))
                 return new Message ();
             var root = data[parameters[0]];
-            var stat = total?root.total:root.today;
+            var stat = total ? root.total : root.today;
             return new Message ((
                 root.name + (total ? "共计:\n" : "今日新增\n") +
                 (stat.confirmed () != 0 ? "确诊" + stat.confirmed () + "例\n" : "") +
