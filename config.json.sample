@@ -5,5 +5,8 @@
         "listen_secret": "secret",
         "access_token": "token"
     },
-    "super_user": 123456788
+    "globals": {
+        "super_user": "modules can only loaded/unloaded with this user",
+        "osu_token": "for Osu module"
+    }
 }

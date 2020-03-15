@@ -13,7 +13,7 @@ namespace CyanBot.Dispatcher {
             CQApiClient cli,
             MessageEvent e
         ) {
-            if (new List<string> (
+            if (System.IO.File.Exists("bots") && new List<string> (
                     System.IO.File.ReadLines ("bots")
                 ).Contains (e.sender.user_id.ToString ())) {
                 Console.Write (e.sender.user_id);

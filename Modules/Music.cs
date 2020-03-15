@@ -8,7 +8,7 @@ namespace CyanBot.Modules {
         [OnCommand ("点歌")]
         public Message Listen (string[] parameters, MessageEvent e) =>
             new Message (new ElementMusic (
-                "163", parameters[0]
+                "163", ElementMusic.GetMusicID ("163", parameters[0]).Result
             ));
     }
 }
