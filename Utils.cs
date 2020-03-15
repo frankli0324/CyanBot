@@ -52,5 +52,11 @@ namespace CyanBot {
             }
             return true;
         }
+        public static string GetRaw (this cqhttp.Cyan.Messages.Message e) {
+            string raw_text = "";
+            foreach (var i in e.data)
+                if (i.type == "text") raw_text += i.data["text"];
+            return raw_text;
+        }
     }
 }
