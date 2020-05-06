@@ -17,8 +17,7 @@ namespace CyanBot.Modules {
         public Module () {
             Console.WriteLine ("loading " + this.GetType ().Name);
             var cmd_funcs = this.GetType ()
-                .GetMethodsBySig (
-                    typeof (Message),
+                .GetMethodsBySig (null,
                     typeof (string[]),
                     typeof (MessageEvent)
                 );
@@ -30,11 +29,10 @@ namespace CyanBot.Modules {
                     on_commands.Add (attr.command, func);
             }
             var msg_funcs = this.GetType ()
-                .GetMethodsBySig (
-                    typeof (Message),
+                .GetMethodsBySig (null,
                     typeof (Message),
                     typeof (MessageEvent)
-                );;
+                );
             foreach (var func in msg_funcs) {
                 var msg_attrs = (OnMessageAttribute) func.GetCustomAttribute (
                     typeof (OnMessageAttribute), false
@@ -47,19 +45,23 @@ namespace CyanBot.Modules {
             string command, string[] parameter, MessageEvent raw_event
         ) {
             if (on_commands.ContainsKey (command)) {
-                Message message = null;
-                await Task.Run (() =>
-                message = (Message) on_commands[command].Invoke (this, new object[] {
-                    parameter,
-                    raw_event
-                }));
-                return message;
+                var result = on_commands[command].Invoke (
+                    this, new object[] { parameter, raw_event }
+                );
+                if (on_commands[command].ReturnType == typeof (Task<Message>))
+                    return await (Task<Message>) result;
+                else return (Message) result;
             }
             return new Message ();
         }
-        public Message InvokeMessage (Message message, MessageEvent raw_event) {
+        public async Task<Message> InvokeMessage (Message message, MessageEvent raw_event) {
             if (on_messages == null) return new Message ();
-            return (Message) on_messages.Invoke (this, new object[] { message, raw_event });
+            var result = on_messages.Invoke (
+                this, new object[] { message, raw_event }
+            );
+            if (on_messages.ReturnType == typeof (Task<Message>))
+                return await (Task<Message>) result;
+            else return (Message) result;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace CyanBot.Dispatcher {
                 List<Task> to_run = new List<Task> ();
                 if (await Module.loaded_modules.Values.AllAsync (async (mod) => {
                     var result = await mod.InvokeCommand (command.Item1, command.Item2, e);
-                    if (result.data.Count == 0)
+                    if (result.data.Any ())
                         return true;
                     to_run.Append (cli.SendMessageAsync (e.GetEndpoint (), result));
                     return false;
@@ -36,7 +36,7 @@ namespace CyanBot.Dispatcher {
                 await Task.WhenAll (to_run);
             } catch (CommandErrorException) {
                 foreach (var i in Module.loaded_modules.Values) {
-                    var ret = i.InvokeMessage (e.message, e);
+                    var ret = await i.InvokeMessage (e.message, e);
                     if (ret.data.Count != 0) //can respond
                         await cli.SendMessageAsync (e.GetEndpoint (), ret);
                 }
