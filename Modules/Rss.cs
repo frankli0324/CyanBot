@@ -45,9 +45,16 @@ namespace CyanBot.Modules {
             db.GetCollection<Subscription> ("subscriptions");
 
         [OnCommand ("subsc")]
+        [OnCommand ("subscribe")]
         public Message Subscribe (string[] parameters, MessageEvent e) {
-            if (parameters.Length == 0) return new Message ("/subscribe [feed]");
+            if (!parameters.Any ()) return new Message ("/subscribe [feed]");
             try {
+                var subscribed = col.Find (x =>
+                    e.GetEndpoint ().Item1 == x.endpoint_type &&
+                    e.GetEndpoint ().Item2 == x.endpoint_num
+                );
+                if (subscribed.Any (x => x.feed == parameters[0]))
+                    return new Message ("already subscribed");
                 FeedReader.ReadAsync (parameters[0]).ContinueWith (
                     (f, o) =>
                         col.Insert (new Subscription {
