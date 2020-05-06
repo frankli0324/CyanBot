@@ -23,32 +23,32 @@ namespace CyanBot.Modules {
             "https://i.loli.net/2019/04/20/5cba03172f768.png", //10
             "https://i.loli.net/2019/04/20/5cba03198cab3.png" //11
         };
-        readonly HashSet < (MessageType, long) > alarmList =
-            new HashSet < (MessageType, long) > ();
+        readonly HashSet<(MessageType, long)> alarmList =
+            new HashSet<(MessageType, long)> ();
         bool isStarted = false;
-        readonly System.Timers.Timer t = new System.Timers.Timer (3600000);
+        readonly CancellationTokenSource token_source;
+        ~Time () {
+            token_source.Cancel ();
+        }
 
         [OnCommand ("start_alarm")]
         public Message StartAlarm (string[] parameters, MessageEvent e) {
             if (isStarted == false) {
-                Task.Run (() => {
-                    var next_hour = DateTime.UtcNow.AddHours (1);
-                    next_hour = next_hour.AddMinutes (-next_hour.Minute);
-                    next_hour = next_hour.AddSeconds (-next_hour.Second);
-                    Thread.Sleep (next_hour - DateTime.UtcNow);
-                    t.Elapsed += (o, time) => {
-                        while (DateTime.UtcNow.Minute > 50) Thread.Sleep (1000);
-                        //just in case
+                Task.Run (async () => {
+                    while (true) {
+                        var next_hour = DateTime.UtcNow.AddHours (1);
+                        next_hour = next_hour.AddMinutes (-next_hour.Minute);
+                        next_hour = next_hour.AddSeconds (-next_hour.Second);
+                        await Task.Delay (next_hour - DateTime.UtcNow, token_source.Token);
+                        if (token_source.IsCancellationRequested) break;
                         int pick = (DateTime.UtcNow.Hour + 8) % 12;
                         foreach (var i in alarmList) {
-                            Program.client.SendMessageAsync (i, new Message (
+                            await Program.client.SendMessageAsync (i, new Message (
                                 new ElementImage (pics[pick])
                             ));
                         }
-                    };
-                    t.AutoReset = true;
-                    t.Start ();
-                });
+                    }
+                }, token_source.Token);
                 isStarted = true;
             }
             if (alarmList.Contains (e.GetEndpoint ()) == false) {
