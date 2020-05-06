@@ -23,8 +23,8 @@ namespace CyanBot.Modules {
                 }
             }).ContinueWith ((t) => {
                 var d = new cqhttp.Cyan.Utils.Dialogue ();
-                d["BEGIN"] = (c, m) => {
-                    var s = c.SendTextAsync (
+                d["BEGIN"] = async (c, m) => {
+                    await c.SendTextAsync (
                         e.GetEndpoint (),
                         WRScraper.getWRFor (
                             Creds.loggedIn[e.GetEndpoint ().Item2], m.GetRaw ()).Result
@@ -47,15 +47,15 @@ namespace CyanBot.Modules {
             ).ContinueWith ((t) => {
                 var d = new cqhttp.Cyan.Utils.Dialogue ();
                 string username = "", password = "";
-                d["BEGIN"] = (c, m) => {
+                d["BEGIN"] = async (c, m) => {
                     username = m.GetRaw ();
-                    var s = c.SendTextAsync (e.GetEndpoint (), "请输入token");
+                    await c.SendTextAsync (e.GetEndpoint (), "请输入token");
                     return "SET_TOKEN";
                 };
-                d["SET_TOKEN"] = (c, m) => {
+                d["SET_TOKEN"] = async (c, m) => {
                     password = m.GetRaw ();
                     Creds.PersistData (e.GetEndpoint ().Item2, username, password);
-                    var s = c.SendTextAsync (e.GetEndpoint (), $"设置完成,用户名:{username},token:{password}");
+                    await c.SendTextAsync (e.GetEndpoint (), $"设置完成,用户名:{username},token:{password}");
                     return "DONE";
                 };
                 cqhttp.Cyan.Utils.DialoguePool.Join (e.GetEndpoint (), d);
@@ -65,66 +65,45 @@ namespace CyanBot.Modules {
 
         [OnCommand ("submit")]
         public static Message Submit (string[] parameters, MessageEvent e) {
-            if (System.DateTime.UtcNow.AddHours (8).DayOfWeek != System.DayOfWeek.Sunday) {
-                var s = Program.client.SendTextAsync (
-                    e.GetEndpoint (),
-                    "only sunday"
+            if (System.DateTime.UtcNow.AddHours (8).DayOfWeek != System.DayOfWeek.Sunday)
+                return new Message ("only sunday");
+            if (Creds.ensureLoggedIn (e.GetEndpoint ().Item2).Result == false)
+                return new Message ("请重新进行/init");
+            var d = new cqhttp.Cyan.Utils.Dialogue ();
+            d["BEGIN"] = async (c, m) => {
+                await WRScraper.submitWR (
+                    Creds.loggedIn[e.GetEndpoint ().Item2],
+                    m.GetRaw ()
                 );
-                return new Message ();
-            }
-            if (Creds.ensureLoggedIn (e.GetEndpoint ().Item2).Result == false) {
-                var s = Program.client.SendTextAsync (
-                    e.GetEndpoint (),
-                    "请重新进行/init"
-                );
-                return new Message ();
-            }
-            Program.client.SendTextAsync (
-                e.GetEndpoint (),
-                "请发送周报的内容:"
-            ).ContinueWith ((t) => {
-                var d = new cqhttp.Cyan.Utils.Dialogue ();
-                d["BEGIN"] = (c, m) => {
-                    WRScraper.submitWR (
-                        Creds.loggedIn[e.GetEndpoint ().Item2],
-                        m.GetRaw ()
-                    ).Wait ();
-                    var s = c.SendTextAsync (e.GetEndpoint (), "已提交");
-                    var sup = WRScraper.updateIndex ();
-                    return "DONE";
-                };
-                cqhttp.Cyan.Utils.DialoguePool.Join (e.GetEndpoint (), d);
-            });
-            return new Message ();
+                await c.SendTextAsync (e.GetEndpoint (), "已提交");
+                await WRScraper.updateIndex ();
+                return "DONE";
+            };
+            cqhttp.Cyan.Utils.DialoguePool.Join (e.GetEndpoint (), d);
+            return new Message ("请发送周报的内容:");
         }
 
         [OnCommand ("status")]
-        public static Message Status (string[] parameters, MessageEvent e) {
-            Task.Run (WRScraper.updateIndex).ContinueWith (async (t) => {
-                await Program.client.SendTextAsync (
-                    e.GetEndpoint (),
-                    $"{WRScraper.submittedUsers.Count}人已提交周报"
-                );
-            });
-            return new Message ();
+        public async static Task<Message> Status (string[] parameters, MessageEvent e) {
+            await WRScraper.updateIndex ();
+            return new Message ($"{WRScraper.submittedUsers.Count}人已提交周报");
         }
         [OnCommand ("remind")]
-        public static Message Remind (string[] parameters, MessageEvent e) {
-            WRScraper.updateIndex ().ContinueWith (async (t) => {
-                var unsubmitted = (
-                    from user in WRScraper.users.Keys
-                    where !WRScraper.submittedUsers.Contains (user)
-                    select user
-                ).ToList ();
-                if (unsubmitted.Count > 0) {
-                    string toSend = $"仍然有{unsubmitted.Count}名铁憨憨没有交周报。他们分别是:\n";
-                    unsubmitted.ForEach ((s) => toSend += s + ',');
-                    toSend = toSend.TrimEnd (',');
-                    toSend += "\n清退警告⚠️";
-                    await Program.client.SendTextAsync (e.GetEndpoint (), toSend);
-                }
-            });
-            return new Message ();
+        public async static Task<Message> Remind (string[] parameters, MessageEvent e) {
+            await WRScraper.updateIndex ();
+            var unsubmitted = (
+                from user in WRScraper.users.Keys
+                where !WRScraper.submittedUsers.Contains (user)
+                select user
+            ).ToList ();
+            if (unsubmitted.Count > 0) {
+                string toSend = $"仍然有{unsubmitted.Count}名铁憨憨没有交周报。他们分别是:\n";
+                unsubmitted.ForEach ((s) => toSend += s + ',');
+                toSend = toSend.TrimEnd (',');
+                toSend += "\n清退警告⚠️";
+                return new Message (toSend);
+            }
+            return new Message ("终于有一次全员交齐了");
         }
     }
 }
