@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace CyanBot.Modules.CTFdUtils {
 
     public class CTFdClient : HttpClient {
-        string host;
+        public string host { get; private set; }
         static Regex csrf_matcher = new Regex (
             @"\'?csrf(Nonce|_nonce)\'? ?[:=] ""(.*)""",
             RegexOptions.Compiled | RegexOptions.Multiline
@@ -59,7 +59,7 @@ namespace CyanBot.Modules.CTFdUtils {
         public string type;
         public string data;
         public Event (string e) {
-            foreach (var l in e.Trim ('\n', ' ').Split ('\n')){
+            foreach (var l in e.Trim ('\n', ' ').Split ('\n')) {
                 var (k, v) = l.Split (':', 2);
                 if (k == "event") type = v;
                 else if (k == "data") data = v;
@@ -82,7 +82,6 @@ namespace CyanBot.Modules.CTFdUtils {
                 state = State.endofline;
             } else state = State.consuming;
             current.Add (b);
-            Console.Write ((char) b);
             return null;
         }
     }

@@ -28,7 +28,7 @@ namespace CyanBot.Modules.CTFdUtils {
             switch (json["type"].ToObject<string> ()) {
             case "challenge_solved":
                 var t = JToken.Parse (await (await client.GetAsync (
-                    "https://mssctf.xidian.edu.cn/api/v1/challenges/" + json["challenge"]
+                    $"{client.host.TrimEnd ('/')}/api/v1/challenges/" + json["challenge"]
                 )).Content.ReadAsStringAsync());
                 return new Message ($"{json["user"]["name"]}做出了{t["data"]["name"]}");
             case "challenge_created":
