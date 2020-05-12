@@ -13,7 +13,7 @@ namespace CyanBot.Dispatcher {
             CQApiClient cli,
             MessageEvent e
         ) {
-            if (System.IO.File.Exists("bots") && new List<string> (
+            if (System.IO.File.Exists ("bots") && new List<string> (
                     System.IO.File.ReadLines ("bots")
                 ).Contains (e.sender.user_id.ToString ())) {
                 Console.Write (e.sender.user_id);
@@ -28,7 +28,7 @@ namespace CyanBot.Dispatcher {
                 List<Task> to_run = new List<Task> ();
                 if (await Module.loaded_modules.Values.AllAsync (async (mod) => {
                     var result = await mod.InvokeCommand (command.Item1, command.Item2, e);
-                    if (result.data.Any ())
+                    if (!result.data.Any ())
                         return true;
                     to_run.Append (cli.SendMessageAsync (e.GetEndpoint (), result));
                     return false;
@@ -44,12 +44,12 @@ namespace CyanBot.Dispatcher {
         }
         public static (string, string[]) ParseCommand (string raw) {
             try {
-                if (raw.Split (' ') [0][0] != '/')
+                if (raw.Split (' ')[0][0] != '/')
                     throw new CommandErrorException ();
             } catch {
                 throw new CommandErrorException ();
             }
-            string command = raw.Split (' ') [0].Substring (1);
+            string command = raw.Split (' ')[0].Substring (1);
             List<string> parameters = new List<string> ();
             if (raw.TrimEnd ().Length == command.Length)
                 return (command, parameters.ToArray ());
