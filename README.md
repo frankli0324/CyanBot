@@ -1,4 +1,5 @@
 # CyanBot
+
 > Some personal functions built with EssentialBot
 
 * improved module system
@@ -6,17 +7,33 @@
 
 ## Deployment
 
-`dotnet publish -c Release`, deploy the `bin/Release/netcoreapp3.1/publish` to your server  
+`dotnet publish -c Release -r linux-x64 && docker build . -t cyanbot`
 
-create following files before execution:
+example compose file:
 
-file        | description
------------ | ------------------------------------------------------------------------
-config.json | see `config.json.sample`
-bots        | messages sent by users whose ID is present in this file will be ignored
-
-fire up with `dotnet CyanBot.dll` or simply `./CyanBot`
-
+```yml
+version: "3.7"
+services:
+  mirai:
+    image: java
+    command: java -jar /opt/onebot-kotlin-0.3.3-all.jar --args -- --no-console
+    working_dir: /opt
+    volumes:
+      - ./mirai-http:/opt
+    environment:
+      - TZ=Asia/Shanghai
+  cyan:
+    image: cyanbot
+    depends_on:
+      - mirai
+    restart: always
+    volumes:
+      - ./cyan-data:/opt
+    environment:
+      - access_url=ws://mirai:6700/api
+      - event_url=ws://mirai:6700/event
+      - access_token=your_token
+```
 
 ## Development
 
