@@ -38,11 +38,8 @@ namespace CyanBot.Modules {
                 ).ToArray ());
             }
         }, null, 0, 10000);
-        static readonly LiteDB.LiteDatabase db = new LiteDB.LiteDatabase (
-            "Filename=rss.db"
-        );
         static readonly LiteDB.LiteCollection<Subscription> col =
-            db.GetCollection<Subscription> ("subscriptions");
+            Program.Data.GetCollection<Subscription> ("subscriptions");
 
         [OnCommand ("subsc")]
         [OnCommand ("subscribe")]
