@@ -20,8 +20,10 @@ namespace CyanBot {
                 event_url: Globals["event_url"],
                 access_token: Globals["access_token"]
             );
+            Modules.Module.loaded_modules.Add ("Internal", new Modules.Internal ());
+
             cqhttp.Cyan.Utils.Logger.GetLogger ("cqhttp.Cyan").log_level = cqhttp.Cyan.Enums.Verbosity.ERROR;
-            cqhttp.Cyan.Utils.Logger.GetLogger ("modules").log_level = cqhttp.Cyan.Enums.Verbosity.INFO;
+            cqhttp.Cyan.Utils.Logger.GetLogger ("internal").log_level = cqhttp.Cyan.Enums.Verbosity.INFO;
 
             client.OnEventAsync += async (cli, e) => {
                 if (e is MessageEvent mevent)

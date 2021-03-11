@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -8,14 +7,11 @@ using cqhttp.Cyan.Messages;
 namespace CyanBot.Modules {
     public class Module {
         public static Dictionary<string, Module> loaded_modules =
-            new Dictionary<string, Module> (new KeyValuePair<string, Module>[] {
-                new KeyValuePair<string, Module> ("Internal", new Internal ())
-            });
+            new Dictionary<string, Module> ();
         Dictionary<string, MethodInfo> on_commands =
             new Dictionary<string, MethodInfo> ();
         MethodInfo on_messages = null;
         public Module () {
-            Console.WriteLine ("loading " + this.GetType ().Name);
             var cmd_funcs = this.GetType ()
                 .GetMethodsBySig (null,
                     typeof (string[]),
