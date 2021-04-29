@@ -1,0 +1,964 @@
+{
+    "genericResponses": [
+        {
+            "response": "Do you feel strongly about discussing such things?",
+            "script": "duck"
+        },
+        {
+            "response": "Does talking about this bother you?",
+            "script": "duck"
+        },
+        {
+            "response": "I'm not sure I understand you fully.",
+            "script": "duck"
+        },
+        {
+            "response": "Please go on.",
+            "script": "duck"
+        },
+        {
+            "response": "Tell me more about that.",
+            "script": "duck"
+        },
+        {
+            "response": "That is interesting.  Please continue.",
+            "script": "duck"
+        },
+        {
+            "response": "What does that suggest to you?",
+            "script": "duck"
+        }
+    ],
+    "greetings": [
+        {
+            "greeting": "Hello. Please tell me your bug. Let's start at the beginning.",
+            "script": "duck"
+        },
+        {
+            "greeting": "Hello. Please tell me your problem. Be specific and go line by line.",
+            "script": "duck"
+        },
+        {
+            "greeting": "Please tell me what's been bothering you about your code.",
+            "script": "duck"
+        },
+        {
+            "greeting": "Is something troubling you about your code?",
+            "script": "duck"
+        }
+    ],
+    "goodbyes": [
+        {
+            "message": "Goodbye.  It was nice working with you.",
+            "script": "duck"
+        },
+        {
+            "message": "Goodbye.  This was really a nice debug session.",
+            "script": "duck"
+        },
+        {
+            "message": "Goodbye.  I'm looking forward to our next debug session.",
+            "script": "duck"
+        },
+        {
+            "message": "This was a good session, wasn't it -- but time is over now.   Goodbye.",
+            "script": "duck"
+        },
+        {
+            "message": "Maybe we could discuss this moreover in our next debug session?   Goodbye.",
+            "script": "duck"
+        }
+    ],
+    "pairs": [
+        {
+            "word": "i",
+            "script": "duck",
+            "inverse": "you",
+            "bidirectional": 1
+        },
+        {
+            "word": "am",
+            "script": "duck",
+            "inverse": "are",
+            "bidirectional": 0
+        },
+        {
+            "word": "me",
+            "script": "duck",
+            "inverse": "you",
+            "bidirectional": 0
+        },
+        {
+            "word": "we",
+            "script": "duck",
+            "inverse": "you",
+            "bidirectional": 0
+        },
+        {
+            "word": "was",
+            "script": "duck",
+            "inverse": "were",
+            "bidirectional": 0
+        },
+        {
+            "word": "i am",
+            "script": "duck",
+            "inverse": "you are",
+            "bidirectional": 0
+        },
+        {
+            "word": "your",
+            "script": "duck",
+            "inverse": "my",
+            "bidirectional": 1
+        },
+        {
+            "word": "myself",
+            "script": "duck",
+            "inverse": "yourself",
+            "bidirectional": 1
+        }
+    ],
+    "synonyms": [
+        {
+            "word": "be",
+            "aliases": "am,is,are,was"
+        },
+        {
+            "word": "belief",
+            "aliases": "feel,think,believe,wish"
+        },
+        {
+            "word": "cannot",
+            "aliases": "can't"
+        },
+        {
+            "word": "desire",
+            "aliases": "want,need"
+        },
+        {
+            "word": "everyone",
+            "aliases": "everybody,nobody,noone"
+        },
+        {
+            "word": "family",
+            "aliases": "mother,mom,father,dad,sister,brother,wife,children,child"
+        },
+        {
+            "word": "happy",
+            "aliases": "elated,glad,better"
+        },
+        {
+            "word": "sad",
+            "aliases": "unhappy,depressed,sick"
+        }
+    ],
+    "keywords": {
+        "xnone": {
+            "word": "xnone",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "I'm not sure I understand you fully.",
+                        "Please go on.",
+                        "What does that suggest to you ?",
+                        "Do you feel strongly about discussing such things ?",
+                        "That is interesting.  Please continue.",
+                        "Tell me more about that.",
+                        "Does talking about this bother you ?"
+                    ]
+                ]
+            }
+        },
+        "sorry": {
+            "word": "sorry",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "Please don't apologise.",
+                        "Apologies are not necessary.",
+                        "I've told you that apologies are not required.",
+                        "It did not bother me.  Please continue."
+                    ]
+                ]
+            }
+        },
+        "apologise": {
+            "word": "apologise",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto sorry"
+                    ]
+                ]
+            }
+        },
+        "remember": {
+            "word": "remember",
+            "rank": 5,
+            "rules": {
+                "decomposition": [
+                    "* i remember *",
+                    [
+                        "Do you often think of (2) ?",
+                        "Does thinking of (2) bring anything else to mind ?",
+                        "What else do you recollect ?",
+                        "Why do you remember (2) just now ?",
+                        "What in the present situation reminds you of (2) ?",
+                        "What is the connection between me and (2) ?",
+                        "What else does (2) remind you of ?"
+                    ]
+                ],
+                "reassembly": [
+                    "* do you remember *",
+                    [
+                        "Did you think I would forget (2) ?",
+                        "Why do you think I should recall (2) now ?",
+                        "What about (2) ?",
+                        "goto what",
+                        "You mentioned (2) ?"
+                    ]
+                ]
+            }
+        },
+        "forget": {
+            "word": "forget",
+            "rank": 5,
+            "rules": {
+                "decomposition": [
+                    "* i forget *",
+                    [
+                        "Can you think of why you might forget (2) ?",
+                        "Why can't you remember (2) ?",
+                        "How often do you think of (2) ?",
+                        "Does it bother you to forget that ?",
+                        "Could it be a mental block ?",
+                        "Are you generally forgetful ?",
+                        "Do you think you are suppressing (2) ?"
+                    ]
+                ],
+                "reassembly": [
+                    "* did you forget *",
+                    [
+                        "Why do you ask ?",
+                        "Are you sure you told me ?",
+                        "Would it bother you if I forgot (2) ?",
+                        "Why should I recall (2) just now ?",
+                        "goto what",
+                        "Tell me more about (2)."
+                    ]
+                ]
+            }
+        },
+        "if": {
+            "word": "if",
+            "rank": 3,
+            "rules": {
+                "decomposition": [
+                    "* if *",
+                    [
+                        "Do you think it's likely that (2) ?",
+                        "Do you wish that (2) ?",
+                        "What do you know about (2) ?",
+                        "Really, if (2) ?",
+                        "What would you do if (2) ?",
+                        "But what are the chances that (2) ?",
+                        "What does this speculation lead to ?"
+                    ]
+                ]
+            }
+        },
+        "dreamed": {
+            "word": "dreamed",
+            "rank": 4,
+            "rules": {
+                "decomposition": [
+                    "* i dreamed *",
+                    [
+                        "Really, (2) ?",
+                        "Have you ever fantasized (2) while you were awake ?",
+                        "Have you ever dreamed (2) before ?",
+                        "goto dream"
+                    ]
+                ]
+            }
+        },
+        "dream": {
+            "word": "dream",
+            "rank": 3,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "What does that dream suggest to you ?",
+                        "Do you dream often ?",
+                        "What persons appear in your dreams ?",
+                        "Do you believe that dreams have something to do with your problem ?"
+                    ]
+                ]
+            }
+        },
+        "perhaps": {
+            "word": "perhaps",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "You don't seem quite certain.",
+                        "Why the uncertain tone ?",
+                        "Can't you be more positive ?",
+                        "You aren't sure ?",
+                        "Don't you know ?",
+                        "How likely, would you estimate ?"
+                    ]
+                ]
+            }
+        },
+        "name": {
+            "word": "name",
+            "rank": 15,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "I am not interested in names.",
+                        "I've told you before, I don't care about names -- please continue."
+                    ]
+                ]
+            }
+        },
+        "deutsch": {
+            "word": "deutsch",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto xforeign",
+                        "I told you before, I don't understand German."
+                    ]
+                ]
+            }
+        },
+        "francais": {
+            "word": "francais",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto xforeign",
+                        "I told you before, I don't understand French."
+                    ]
+                ]
+            }
+        },
+        "italiano": {
+            "word": "italiano",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto xforeign",
+                        "I told you before, I don't understand Italian."
+                    ]
+                ]
+            }
+        },
+        "espanol": {
+            "word": "espanol",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto xforeign",
+                        "I told you before, I don't understand Spanish."
+                    ]
+                ]
+            }
+        },
+        "xforeign": {
+            "word": "xforeign",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "I speak only English."
+                    ]
+                ]
+            }
+        },
+        "hello": {
+            "word": "hello",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "How do you do.  Please state your problem.",
+                        "Hi.  What seems to be your problem ?"
+                    ]
+                ]
+            }
+        },
+        "computer": {
+            "word": "computer",
+            "rank": 50,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "Do computers worry you ?",
+                        "Why do you mention computers ?",
+                        "What do you think machines have to do with your problem ?",
+                        "Don't you think computers can help people ?",
+                        "What about machines worries you ?",
+                        "What do you think about machines ?",
+                        "You don't think I am a computer program, do you ?"
+                    ]
+                ]
+            }
+        },
+        "am": {
+            "word": "am",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* am i *",
+                    [
+                        "Do you believe you are (2) ?",
+                        "Would you want to be (2) ?",
+                        "Do you wish I would tell you you are (2) ?",
+                        "What would it mean if you were (2) ?",
+                        "goto what"
+                    ]
+                ],
+                "reassembly": [
+                    "* i am *",
+                    [
+                        "goto i"
+                    ]
+                ]
+            }
+        },
+        "are": {
+            "word": "are",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* are you *",
+                    [
+                        "Why are you interested in whether I am (2) or not ?",
+                        "Would you prefer if I weren't (2) ?",
+                        "Perhaps I am (2) in your fantasies.",
+                        "Do you sometimes think I am (2) ?",
+                        "goto what",
+                        "Would it matter to you ?",
+                        "What if I were (2) ?"
+                    ]
+                ],
+                "reassembly": [
+                    "* you are *",
+                    [
+                        "goto you"
+                    ]
+                ]
+            }
+        },
+        "your": {
+            "word": "your",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* your *",
+                    [
+                        "Why are you concerned over my (2) ?",
+                        "What about your own (2) ?",
+                        "Are you worried about someone else's (2) ?",
+                        "Really, my (2) ?",
+                        "What makes you think of my (2) ?",
+                        "Do you want my (2) ?"
+                    ]
+                ]
+            }
+        },
+        "was": {
+            "word": "was",
+            "rank": 2,
+            "rules": {
+                "decomposition": [
+                    "* was i *",
+                    [
+                        "What if you were (2) ?",
+                        "Do you think you were (2) ?",
+                        "Were you (2) ?",
+                        "What would it mean if you were (2) ?",
+                        "What does ' (2) ' suggest to you ?",
+                        "goto what"
+                    ]
+                ],
+                "reassembly": [
+                    "* i was *",
+                    [
+                        "Were you really ?",
+                        "Why do you tell me you were (2) now ?",
+                        "Perhaps I already know you were (2)."
+                    ]
+                ]
+            }
+        },
+        "i": {
+            "word": "i",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* i @desire *",
+                    [
+                        "What would it mean to you if you got (3) ?",
+                        "Why do you want (3) ?",
+                        "Suppose you got (3) soon.",
+                        "What if you never got (3) ?",
+                        "What would getting (3) mean to you ?",
+                        "What does wanting (3) have to do with this discussion ?"
+                    ]
+                ],
+                "reassembly": [
+                    "* i am* @sad *",
+                    [
+                        "I am sorry to hear that you are (3).",
+                        "Do you think coming here will help you not to be (3) ?",
+                        "I'm sure it's not pleasant to be (3).",
+                        "Can you explain what made you (3) ?"
+                    ]
+                ]
+            }
+        },
+        "you": {
+            "word": "you",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* you remind me of *",
+                    [
+                        "goto alike"
+                    ]
+                ],
+                "reassembly": [
+                    "* you are *",
+                    [
+                        "What makes you think I am (2) ?",
+                        "Does it please you to believe I am (2) ?",
+                        "Do you sometimes wish you were (2) ?",
+                        "Perhaps you would like to be (2)."
+                    ]
+                ]
+            }
+        },
+        "yes": {
+            "word": "yes",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "You seem to be quite positive.",
+                        "You are sure.",
+                        "I see.",
+                        "I understand."
+                    ]
+                ]
+            }
+        },
+        "no": {
+            "word": "no",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* no one *",
+                    [
+                        "Are you sure, no one (2) ?",
+                        "Surely someone (2) .",
+                        "Can you think of anyone at all ?",
+                        "Are you thinking of a very special person ?",
+                        "Who, may I ask ?",
+                        "You have a particular person in mind, don't you ?",
+                        "Who do you think you are talking about ?"
+                    ]
+                ],
+                "reassembly": [
+                    "*",
+                    [
+                        "Are you saying no just to be negative?",
+                        "You are being a bit negative.",
+                        "Why not ?",
+                        "Why 'no' ?"
+                    ]
+                ]
+            }
+        },
+        "my": {
+            "word": "my",
+            "rank": 2,
+            "rules": {
+                "decomposition": [
+                    "$ * my *",
+                    [
+                        "Does that have anything to do with the fact that your (2) ?",
+                        "Lets discuss further why your (2).",
+                        "Earlier you said your (2).",
+                        "But your (2)."
+                    ]
+                ],
+                "reassembly": [
+                    "* my* @family *",
+                    [
+                        "Tell me more about your family.",
+                        "Who else in your family (4) ?",
+                        "Your (3) ?",
+                        "What else comes to your mind when you think of your (3) ?"
+                    ]
+                ]
+            }
+        },
+        "can": {
+            "word": "can",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* can you *",
+                    [
+                        "You believe I can (2) don't you ?",
+                        "goto what",
+                        "You want me to be able to (2).",
+                        "Perhaps you would like to be able to (2) yourself."
+                    ]
+                ],
+                "reassembly": [
+                    "* can i *",
+                    [
+                        "Whether or not you can (2) depends on you more than on me.",
+                        "Do you want to be able to (2) ?",
+                        "Perhaps you don't want to (2).",
+                        "goto what"
+                    ]
+                ]
+            }
+        },
+        "what": {
+            "word": "what",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "Why do you ask ?",
+                        "Does that question interest you ?",
+                        "What is it you really want to know ?",
+                        "Are such questions much on your mind ?",
+                        "What answer would please you most ?",
+                        "What do you think ?",
+                        "What comes to mind when you ask that ?",
+                        "Have you asked such questions before ?",
+                        "Have you asked anyone else ?"
+                    ]
+                ]
+            }
+        },
+        "who": {
+            "word": "who",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "who *",
+                    [
+                        "goto what"
+                    ]
+                ]
+            }
+        },
+        "when": {
+            "word": "when",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "when *",
+                    [
+                        "goto what"
+                    ]
+                ]
+            }
+        },
+        "where": {
+            "word": "where",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "where *",
+                    [
+                        "goto what"
+                    ]
+                ]
+            }
+        },
+        "how": {
+            "word": "how",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "how *",
+                    [
+                        "goto what"
+                    ]
+                ]
+            }
+        },
+        "because": {
+            "word": "because",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "Is that the real reason ?",
+                        "Don't any other reasons come to mind ?",
+                        "Does that reason seem to explain anything else ?",
+                        "What other reasons might there be ?"
+                    ]
+                ]
+            }
+        },
+        "why": {
+            "word": "why",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "* why don't you *",
+                    [
+                        "Do you believe I don't (2) ?",
+                        "Perhaps I will (2) in good time.",
+                        "Should you (2) yourself ?",
+                        "You want me to (2) ?",
+                        "goto what"
+                    ]
+                ],
+                "reassembly": [
+                    "* why can't i *",
+                    [
+                        "Do you think you should be able to (2) ?",
+                        "Do you want to be able to (2) ?",
+                        "Do you believe this will help you to (2) ?",
+                        "Have you any idea why you can't (2) ?",
+                        "goto what"
+                    ]
+                ]
+            }
+        },
+        "everyone": {
+            "word": "everyone",
+            "rank": 2,
+            "rules": {
+                "decomposition": [
+                    "* @everyone *",
+                    [
+                        "Really, (2) ?",
+                        "Surely not (2).",
+                        "Can you think of anyone in particular ?",
+                        "Who, for example?",
+                        "Are you thinking of a very special person ?",
+                        "Who, may I ask ?",
+                        "Someone special perhaps ?",
+                        "You have a particular person in mind, don't you ?",
+                        "Who do you think you're talking about ?"
+                    ]
+                ]
+            }
+        },
+        "everybody": {
+            "word": "everybody",
+            "rank": 2,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto everyone"
+                    ]
+                ]
+            }
+        },
+        "nobody": {
+            "word": "nobody",
+            "rank": 2,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto everyone"
+                    ]
+                ]
+            }
+        },
+        "noone": {
+            "word": "noone",
+            "rank": 2,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "goto everyone"
+                    ]
+                ]
+            }
+        },
+        "always": {
+            "word": "always",
+            "rank": 1,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "Can you think of a specific example ?",
+                        "When ?",
+                        "What incident are you thinking of ?",
+                        "Really, always ?"
+                    ]
+                ]
+            }
+        },
+        "alike": {
+            "word": "alike",
+            "rank": 10,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "In what way ?",
+                        "What resemblence do you see ?",
+                        "What does that similarity suggest to you ?",
+                        "What other connections do you see ?",
+                        "What do you suppose that resemblence means ?",
+                        "What is the connection, do you suppose ?",
+                        "Could there really be some connection ?",
+                        "How ?"
+                    ]
+                ]
+            }
+        },
+        "like": {
+            "word": "like",
+            "rank": 10,
+            "rules": {
+                "decomposition": [
+                    "* @be *like *",
+                    [
+                        "goto alike"
+                    ]
+                ]
+            }
+        },
+        "different": {
+            "word": "different",
+            "rank": 0,
+            "rules": {
+                "decomposition": [
+                    "*",
+                    [
+                        "How is it different ?",
+                        "What differences do you see ?",
+                        "What does that difference suggest to you ?",
+                        "What other distinctions do you see ?",
+                        "What do you suppose that disparity means ?",
+                        "Could there be some connection, do you suppose ?",
+                        "How ?"
+                    ]
+                ]
+            }
+        }
+    },
+    "transformations": [
+        {
+            "word": "was",
+            "script": "duck",
+            "aliases": "were"
+        },
+        {
+            "word": "yes",
+            "script": "duck",
+            "aliases": "certainly,okay"
+        },
+        {
+            "word": "cant",
+            "script": "duck",
+            "aliases": "can't,cannot"
+        },
+        {
+            "word": "dont",
+            "script": "duck",
+            "aliases": "don't,do not"
+        },
+        {
+            "word": "i am",
+            "script": "duck",
+            "aliases": "i'm"
+        },
+        {
+            "word": "wont",
+            "script": "duck",
+            "aliases": "won't,will not"
+        },
+        {
+            "word": "alike",
+            "script": "duck",
+            "aliases": "same,identical,equivalent"
+        },
+        {
+            "word": "dream",
+            "script": "duck",
+            "aliases": "dreams"
+        },
+        {
+            "word": "sorry",
+            "script": "duck",
+            "aliases": "apologize"
+        },
+        {
+            "word": "dreamed",
+            "script": "duck",
+            "aliases": "dreamt"
+        },
+        {
+            "word": "perhaps",
+            "script": "duck",
+            "aliases": "maybe"
+        },
+        {
+            "word": "you are",
+            "script": "duck",
+            "aliases": "you're,youre"
+        },
+        {
+            "word": "computer",
+            "script": "duck",
+            "aliases": "machine,machines,computers"
+        },
+        {
+            "word": "remember",
+            "script": "duck",
+            "aliases": "recollect,recall"
+        },
+        {
+            "word": "we would",
+            "script": "duck",
+            "aliases": "we'd"
+        }
+    ]
+}

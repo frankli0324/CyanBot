@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
+    <PackageReference Include="ELIZA.NET" Version="1.2.0" />
     <PackageReference Include="cqhttp.Cyan" Version="2.2.0" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
