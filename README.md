@@ -15,13 +15,13 @@ example compose file:
 version: "3.7"
 services:
   mirai:
-    image: java
-    command: java -jar /opt/onebot-kotlin-0.3.3-all.jar --args -- --no-console
-    working_dir: /opt
+    image: frankli0324/go-cqhttp
+    # you can find the Dockerfile for this image at https://github.com/frank-dockerfiles/docker-go-cqhttp
     volumes:
-      - ./mirai-http:/opt
-    environment:
-      - TZ=Asia/Shanghai
+      - ./go-cqhttp:/opt
+    ports:
+      - 6700:6700
+
   cyan:
     image: cyanbot
     depends_on:
