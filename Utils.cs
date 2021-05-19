@@ -1,10 +1,10 @@
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using cqhttp.Cyan.Enums;
-using cqhttp.Cyan.Events.CQEvents;
-using cqhttp.Cyan.Events.CQEvents.Base;
 
 namespace CyanBot {
     [AttributeUsage (AttributeTargets.Method, AllowMultiple = true)]
@@ -15,8 +15,39 @@ namespace CyanBot {
         }
     }
 
-    [AttributeUsage (AttributeTargets.Method, AllowMultiple = true)]
-    public class OnMessageAttribute : Attribute { }
+    [AttributeUsage (AttributeTargets.Method, AllowMultiple = false)]
+    public class OnMessageAttribute : Attribute {
+        public enum Mode { keyword, regex, starts_with, ends_with, none }
+        public Func<string, bool> is_match;
+        public int priority;
+        public OnMessageAttribute (string keyword = null, Mode mode = Mode.none, int priority = 1) {
+            Regex pattern = mode == Mode.regex ? new Regex (keyword) : null;
+            this.priority = priority;
+            switch (mode) {
+            case Mode.keyword: is_match = (x) => x.Contains (keyword); break;
+            case Mode.regex: is_match = (x) => pattern.IsMatch (keyword); break;
+            case Mode.starts_with: is_match = (x) => x.StartsWith (keyword); break;
+            case Mode.ends_with: is_match = (x) => x.EndsWith (keyword); break;
+            default: is_match = (x) => true; break;
+            }
+        }
+    }
+
+    public class TimerAsync {
+        public Func<Task> job;
+        Task work;
+        public delegate Task Job ();
+        public event Job Elapsed;
+        public TimerAsync (int cycle, CancellationToken token) {
+            work = Task.Run (async () => {
+                while (true) {
+                    if (token.IsCancellationRequested) break;
+                    await Elapsed ();
+                    await Task.Delay (cycle, token);
+                }
+            });
+        }
+    }
     public static class Extensions {
         public static void Deconstruct (
             this string[] t,

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using cqhttp.Cyan.Events.CQEvents.Base;
@@ -10,7 +11,7 @@ namespace CyanBot.Modules {
             new Dictionary<string, Module> ();
         Dictionary<string, MethodInfo> on_commands =
             new Dictionary<string, MethodInfo> ();
-        MethodInfo on_messages = null;
+        List<MethodInfo> on_messages = new List<MethodInfo> ();
         public Module () {
             var cmd_funcs = this.GetType ()
                 .GetMethodsBySig (null,
@@ -18,9 +19,7 @@ namespace CyanBot.Modules {
                     typeof (MessageEvent)
                 );
             foreach (var func in cmd_funcs) {
-                var cmd_attrs = (OnCommandAttribute[]) func.GetCustomAttributes (
-                    typeof (OnCommandAttribute), false
-                );
+                var cmd_attrs = func.GetCustomAttributes<OnCommandAttribute> (false);
                 foreach (var attr in cmd_attrs)
                     on_commands.Add (attr.command, func);
             }
@@ -30,12 +29,14 @@ namespace CyanBot.Modules {
                     typeof (MessageEvent)
                 );
             foreach (var func in msg_funcs) {
-                var msg_attrs = (OnMessageAttribute) func.GetCustomAttribute (
-                    typeof (OnMessageAttribute), false
-                );
-                if (msg_attrs != null)
-                    on_messages = func;
+                var attr = func.GetCustomAttribute<OnMessageAttribute> (false);
+                if (attr != null) on_messages.Add (func);
             }
+            on_messages.Sort ((f1, f2) => {
+                return
+                    f1.GetCustomAttribute<OnMessageAttribute> (false).priority -
+                    f2.GetCustomAttribute<OnMessageAttribute> (false).priority;
+            });
         }
         public async Task<Message> InvokeCommand (
             string command, string[] parameter, MessageEvent raw_event
@@ -51,13 +52,18 @@ namespace CyanBot.Modules {
             return new Message ();
         }
         public async Task<Message> InvokeMessage (Message message, MessageEvent raw_event) {
-            if (on_messages == null) return new Message ();
-            var result = on_messages.Invoke (
-                this, new object[] { message, raw_event }
-            );
-            if (on_messages.ReturnType == typeof (Task<Message>))
-                return await (Task<Message>) result;
-            else return (Message) result;
+            foreach (var func in on_messages) {
+                if (func.GetCustomAttribute<OnMessageAttribute> (false)
+                        .is_match (message.GetRaw ())
+                    == false) continue;
+                var result = func.Invoke (
+                    this, new object[] { message, raw_event }
+                );
+                if (func.ReturnType == typeof (Task<Message>))
+                    result = await (Task<Message>) result;
+                if ((result as Message).data.Count > 0) return (Message) result;
+            }
+            return new Message ();
         }
     }
 }
