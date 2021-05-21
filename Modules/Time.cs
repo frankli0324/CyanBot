@@ -26,7 +26,8 @@ namespace CyanBot.Modules {
         readonly HashSet<(MessageType, long)> alarmList =
             new HashSet<(MessageType, long)> ();
         bool isStarted = false;
-        readonly CancellationTokenSource token_source;
+        readonly CancellationTokenSource token_source =
+            new CancellationTokenSource ();
         ~Time () {
             token_source.Cancel ();
         }

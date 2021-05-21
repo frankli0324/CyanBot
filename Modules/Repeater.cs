@@ -6,14 +6,17 @@ using cqhttp.Cyan.Messages;
 namespace CyanBot.Modules {
     public class Repeater : Module {
         const int wait = 3;
-        static Dictionary < (MessageType, long), Message > last =
-            new Dictionary < (MessageType, long), Message > ();
-        static Dictionary < (MessageType, long), int > repeated =
-            new Dictionary < (MessageType, long), int > ();
+        static Dictionary<(MessageType, long), Message> last =
+            new Dictionary<(MessageType, long), Message> ();
+        static Dictionary<(MessageType, long), int> repeated =
+            new Dictionary<(MessageType, long), int> ();
 
         [OnMessage]
-        Message Repeat (Message message, MessageEvent e) {
-            if (last.GetValueOrDefault (e.GetEndpoint (), new Message ()) == message)
+        public Message Repeat (Message message, MessageEvent e) {
+            if (!last.TryGetValue (e.GetEndpoint (), out var lastmsg))
+                return new Message ();
+
+            if (lastmsg == message)
                 repeated[e.GetEndpoint ()]++;
             else {
                 last[e.GetEndpoint ()] = message;
