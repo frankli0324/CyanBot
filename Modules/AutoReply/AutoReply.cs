@@ -67,13 +67,7 @@ namespace CyanBot.Modules {
                 string raw_text = "";
                 foreach (var i in s.data)
                     if (i.type == "text") raw_text += i.data["text"];
-                if (Firewall.waf (e.GetEndpoint (), raw_text))
-                    return Reply (raw_text);
-                else {
-                    cqhttp.Cyan.Utils.Logger.GetLogger("AutoReply").Info(
-                        $"{e.GetEndpoint ()} triggered firewall"
-                    );
-                }
+                return Reply (raw_text);
             } catch (KeyNotFoundException) { }
 
             return new Message ();
