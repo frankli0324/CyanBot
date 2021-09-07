@@ -12,6 +12,7 @@ namespace CyanBot.Modules {
             if (p.Length != 2) {
                 return new Message (new ElementText ("Usage: /teach {a} {b}\n其中a, b若含空格, 应用英文引号包括"));
             }
+            if (p[0].Length < 1 || p[1].Length < 1) return new Message ();
             if (db.isExist (p[0])) {
                 if (force)
                     db.Update (p[0], p[1], sender.ToString ());
@@ -22,6 +23,8 @@ namespace CyanBot.Modules {
             return new Message (new ElementText ("谢谢你，我学会了，你呢?"));
         }
         public static Message Reply (string p) {
+            if (p.Length == 0)
+                throw new KeyNotFoundException ();
             var r = db.Lookup (p);
             if (r != null)
                 return new Message (r.reply);
