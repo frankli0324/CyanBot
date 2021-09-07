@@ -47,6 +47,7 @@ namespace CyanBot.Modules.CTFHubUtils {
         static async Task<IEnumerable<Event>> GetEvents (string endpoint) {
             var data = await Request (endpoint, new LimitParams { limit = 5, offset = 0 });
             var epoch = DateTime.UnixEpoch;
+            epoch = epoch.ToLocalTime ();
             return data["items"].Select (item => {
                 return new Event {
                     id = item["id"].ToObject<int> (),
@@ -77,6 +78,7 @@ namespace CyanBot.Modules.CTFHubUtils {
         public static async Task<Event> GetEventDetail (int event_id) {
             var info = await Request ("/Event/getInfo", new EventInfoParams { event_id = event_id });
             var epoch = DateTime.UnixEpoch;
+            epoch = epoch.ToLocalTime ();
             return new Event {
                 id = event_id,
                 title = info["title"].ToObject<string> (),
